@@ -1,0 +1,6 @@
+org.lemon.commons.translation.config.TranslationConfig
+org.lemon.commons.translation.core.impl.DeptNameTranslationImpl
+org.lemon.commons.translation.core.impl.DictTypeTranslationImpl
+org.lemon.commons.translation.core.impl.OssUrlTranslationImpl
+org.lemon.commons.translation.core.impl.UserNameTranslationImpl
+org.lemon.commons.translation.core.impl.NicknameTranslationImpl

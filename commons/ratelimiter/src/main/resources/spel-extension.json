@@ -1,0 +1,7 @@
+{
+  "org.lemon.commons.ratelimiter.annotation.RateLimiter@key": {
+    "method": {
+      "parameters": true
+    }
+  }
+}

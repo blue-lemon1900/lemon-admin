@@ -1,0 +1,4 @@
+org.lemon.commons.web.config.CaptchaConfig
+org.lemon.commons.web.config.FilterConfig
+org.lemon.commons.web.config.I18nConfig
+org.lemon.commons.web.config.ResourcesConfig

@@ -1,0 +1,48 @@
+package org.lemon.system.mapper;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import org.lemon.commons.mybatis.core.mapper.BaseMapperPlus;
+import org.lemon.system.domain.entity.SysUserRole;
+
+import java.util.List;
+
+/**
+ * 用户与角色关联表 数据层
+ *
+ * @author Lion Li
+ */
+public interface SysUserRoleMapper extends BaseMapperPlus<SysUserRole, SysUserRole> {
+
+    /**
+     * 根据角色ID查询关联的用户ID列表
+     *
+     * @param roleId 角色ID
+     * @return 关联到指定角色的用户ID列表
+     */
+    default List<Long> selectUserIdsByRoleId(Long roleId) {
+        return this.selectObjs(new LambdaQueryWrapper<SysUserRole>()
+                .select(SysUserRole::getUserId).eq(SysUserRole::getRoleId, roleId)
+        );
+    }
+
+    /**
+     * 统计指定角色ID关联的用户数量
+     *
+     * @param roleId 角色ID
+     * @return 关联用户数量
+     */
+    default long countByRoleId(Long roleId) {
+        return this.selectCount(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getRoleId, roleId));
+    }
+
+    /**
+     * 统计指定用户ID列表中关联的角色数量
+     *
+     * @param userIds 用户ID列表
+     * @return 关联角色数量
+     */
+    default long countByUserIds(List<Long> userIds) {
+        return this.selectCount(new LambdaQueryWrapper<SysUserRole>().in(SysUserRole::getRoleId, userIds));
+    }
+
+}
