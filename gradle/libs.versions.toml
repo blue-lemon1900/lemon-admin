@@ -5,7 +5,6 @@ redisson = "4.3.0"
 redisson-cache = "4.3.0"
 lock4j = "2.2.7"
 guava = "33.5.0-jre"
-transmittable-thread-local = "2.14.5"
 commons-io = "2.21.0"
 dynamic-datasource = "4.5.0"
 p6spy = "3.9.1"
@@ -20,7 +19,6 @@ redisson = { group = "org.redisson", name = "redisson-spring-boot-starter", vers
 redisson-cache = { group = "org.redisson", name = "redisson-spring-cache", version.ref = "redisson-cache" }
 lock4j = { group = "com.baomidou", name = "lock4j-redisson-spring-boot-starter", version.ref = "lock4j" }
 guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
-transmittable-thread-local = { group = "com.alibaba", name = "transmittable-thread-local", version.ref = "transmittable-thread-local" }
 commons-io = { group = "commons-io", name = "commons-io", version.ref = "commons-io" }
 dynamic-datasource = { group = "com.baomidou", name = "dynamic-datasource-spring-boot4-starter", version.ref = "dynamic-datasource" }
 p6spy = { group = "p6spy", name = "p6spy", version.ref = "p6spy" }

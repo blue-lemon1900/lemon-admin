@@ -10,9 +10,10 @@ dependencies {
 
     compileOnlyApi("org.springframework:spring-webmvc")
     api("org.springframework.boot:spring-boot-starter-security")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     // google 工具类
     implementation(libs.guava)
-    // 解决 ThreadLocal 父子线程的传值问题
-    implementation(libs.transmittable.thread.local)
+    // ContextPropagatingTaskDecorator 的运行时依赖
+    implementation("io.micrometer:context-propagation")
 }

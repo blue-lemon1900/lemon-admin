@@ -1,7 +1,6 @@
 package org.lemon.commons.security.config;
 
 import org.lemon.commons.security.config.properties.LemonSecurityProperties;
-import org.lemon.commons.security.context.TTLSecurityContextHolderStrategy;
 import org.lemon.commons.security.filter.GlobalSpringSecurityExceptionFilter;
 import org.lemon.commons.security.handler.LoginFailHandler;
 import org.lemon.commons.security.handler.LoginSuccessHandler;
@@ -11,13 +10,13 @@ import org.lemon.commons.security.login.username.UsernameAuthenticationProvider;
 import org.lemon.commons.security.service.SecurityFrameworkService;
 import org.lemon.commons.security.service.UsernameService;
 import org.lemon.commons.security.service.impl.SecurityFrameworkServiceImpl;
-import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.core.task.TaskDecorator;
+import org.springframework.core.task.support.ContextPropagatingTaskDecorator;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -55,16 +54,14 @@ public class SecurityBeanConfig {
     }
 
     /**
-     * 声明调用 {@link SecurityContextHolder#setStrategyName(String)} 方法，
-     * 设置使用 {@link TTLSecurityContextHolderStrategy} 作为 Security 的上下文策略
+     * 注册 ContextPropagatingTaskDecorator，用于在 @Async 异步任务执行时
+     * 自动将当前线程的上下文（含 SecurityContext）传播至子线程/虚拟线程。
+     * Spring Boot 4 的 TaskExecutionAutoConfiguration 会自动将所有 TaskDecorator Bean
+     * 组合为 CompositeTaskDecorator 应用到 AsyncTaskExecutor 上。
      */
     @Bean
-    public MethodInvokingFactoryBean securityContextHolderMethodInvokingFactoryBean() {
-        MethodInvokingFactoryBean methodInvokingFactoryBean = new MethodInvokingFactoryBean();
-        methodInvokingFactoryBean.setTargetClass(SecurityContextHolder.class);
-        methodInvokingFactoryBean.setTargetMethod("setStrategyName");
-        methodInvokingFactoryBean.setArguments(TTLSecurityContextHolderStrategy.class.getName());
-        return methodInvokingFactoryBean;
+    public TaskDecorator contextPropagatingTaskDecorator() {
+        return new ContextPropagatingTaskDecorator();
     }
 
     /**
