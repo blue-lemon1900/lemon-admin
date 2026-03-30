@@ -10,6 +10,7 @@ import org.lemon.commons.security.login.username.UsernameAuthenticationProvider;
 import org.lemon.commons.security.service.SecurityFrameworkService;
 import org.lemon.commons.security.service.UsernameService;
 import org.lemon.commons.security.service.impl.SecurityFrameworkServiceImpl;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -89,11 +90,14 @@ public class SecurityBeanConfig {
      *
      * @param usernameService 查询用户信息类
      * @param passwordEncoder 密码加密
+     * @param tenantEnable    是否开启租户
      * @return
      */
     @Bean
-    public UsernameAuthenticationProvider usernameAuthenticationProvider(UsernameService usernameService, PasswordEncoder passwordEncoder) {
-        return new UsernameAuthenticationProvider(usernameService, passwordEncoder);
+    public UsernameAuthenticationProvider usernameAuthenticationProvider(UsernameService usernameService,
+                                                                         PasswordEncoder passwordEncoder,
+                                                                         @Value("${tenant.enable:true}") boolean tenantEnable) {
+        return new UsernameAuthenticationProvider(usernameService, passwordEncoder, tenantEnable);
     }
 
     /**

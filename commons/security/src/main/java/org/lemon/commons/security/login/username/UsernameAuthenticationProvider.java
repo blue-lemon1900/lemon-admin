@@ -1,15 +1,12 @@
 package org.lemon.commons.security.login.username;
 
-import cn.hutool.core.convert.Convert;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
-import org.lemon.commons.core.utils.spring.SpringUtils;
 import org.lemon.commons.security.data.LoginUserInfo;
 import org.lemon.commons.security.exception.BadPasswordException;
 import org.lemon.commons.security.service.UsernameService;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -26,13 +23,15 @@ public class UsernameAuthenticationProvider implements AuthenticationProvider {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final boolean tenantEnable;
+
     @Override
     public Authentication authenticate(@NonNull Authentication authentication) throws AuthenticationException {
         if (authentication instanceof UsernameAuthentication auth) {
             LoginUserInfo userInfo;
 
             // 判断是否启用了租户模式,调用不同的 Service 方法
-            if (Convert.toBool(SpringUtils.getProperty("tenant.enable"), true)) {
+            if (tenantEnable) {
                 userInfo = usernameService.loadUserByUsername(auth.getTenantId(), auth.getUsername());
             } else {
                 userInfo = usernameService.loadUserByUsername(auth.getUsername());
@@ -64,4 +63,3 @@ public class UsernameAuthenticationProvider implements AuthenticationProvider {
         return UsernameAuthentication.class.isAssignableFrom(authentication);
     }
 }
-

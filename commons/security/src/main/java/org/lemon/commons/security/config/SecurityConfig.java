@@ -13,14 +13,13 @@ import org.lemon.commons.security.login.username.UsernameAuthenticationFilter;
 import org.lemon.commons.security.login.username.UsernameAuthenticationProvider;
 import org.lemon.commons.security.service.CaptchaService;
 import org.lemon.commons.security.utils.AnnotationUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.web.util.matcher.OrRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -38,6 +37,8 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.web.savedrequest.NullRequestCache;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.util.ArrayList;
@@ -65,6 +66,7 @@ public class SecurityConfig {
      * @param authenticationSuccessHandler   登录成功Bean
      * @param authenticationFailureHandler   登录失败Bean
      * @param captchaService                 验证码校验bean
+     * @param tenantEnable                   是否开启租户
      * @return 登录认证过滤链
      */
     @Bean
@@ -74,7 +76,8 @@ public class SecurityConfig {
                                                 AuthenticationSuccessHandler authenticationSuccessHandler,
                                                 AuthenticationFailureHandler authenticationFailureHandler,
                                                 CaptchaService captchaService,
-                                                CaptchaProperties captchaProperties) {
+                                                CaptchaProperties captchaProperties,
+                                                @Value("${tenant.enable:true}") boolean tenantEnable) {
         commonHttpSetting(http);
 
         // 复用同一个 builder 实例，避免重复调用 PathPatternRequestMatcher.withDefaults()
@@ -84,7 +87,8 @@ public class SecurityConfig {
                 matcherBuilder.matcher(HttpMethod.POST, "/login/username"),
                 new ProviderManager(usernameAuthenticationProvider),
                 authenticationSuccessHandler,
-                authenticationFailureHandler
+                authenticationFailureHandler,
+                tenantEnable
         );
 
         // 使用 SecurityMatcher 将此过滤链限定在 /login/* 路径下
@@ -163,8 +167,8 @@ public class SecurityConfig {
      * 将 @PermitAll 接口（按 HTTP 方法细分）与配置文件中的免认证路径合并为一个 OR 匹配器，
      * 供 {@link TokenAuthenticationFilter#shouldNotFilter} 使用：命中任意规则即跳过 Token 校验。
      *
-     * @param permitAllUrls  从 @PermitAll 注解提取的 URL（按 HTTP 方法分类）
-     * @param configUrls     配置文件 lemon.security.permit-all-urls 中的路径（不限 HTTP 方法）
+     * @param permitAllUrls 从 @PermitAll 注解提取的 URL（按 HTTP 方法分类）
+     * @param configUrls    配置文件 lemon.security.permit-all-urls 中的路径（不限 HTTP 方法）
      * @return 合并后的 OR 匹配器
      */
     private RequestMatcher buildPermitAllMatcher(Multimap<HttpMethod, String> permitAllUrls, String[] configUrls) {

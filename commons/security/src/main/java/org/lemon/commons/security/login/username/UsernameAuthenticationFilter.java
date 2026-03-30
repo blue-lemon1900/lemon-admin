@@ -1,11 +1,9 @@
 package org.lemon.commons.security.login.username;
 
-import cn.hutool.core.convert.Convert;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
-import org.lemon.commons.core.utils.spring.SpringUtils;
 import org.lemon.commons.json.utils.JsonUtils;
 import org.lemon.commons.security.utils.AuthenticationUtil;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,14 +39,18 @@ import static org.lemon.commons.security.constant.AuthenticationConstant.*;
 @Slf4j
 public class UsernameAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
+    private final boolean tenantEnable;
+
     public UsernameAuthenticationFilter(RequestMatcher pathRequestMatcher,
                                         AuthenticationManager authenticationManager,
                                         AuthenticationSuccessHandler successHandler,
-                                        AuthenticationFailureHandler failureHandler) {
+                                        AuthenticationFailureHandler failureHandler,
+                                        boolean tenantEnable) {
         super(pathRequestMatcher);
         setAuthenticationManager(authenticationManager);
         setAuthenticationSuccessHandler(successHandler);
         setAuthenticationFailureHandler(failureHandler);
+        this.tenantEnable = tenantEnable;
     }
 
     @Override
@@ -63,7 +65,7 @@ public class UsernameAuthenticationFilter extends AbstractAuthenticationProcessi
         UsernameAuthentication authentication;
 
         // 判断是否启用了租户模式
-        if (Convert.toBool(SpringUtils.getProperty("tenant.enable"), true)) {
+        if (tenantEnable) {
             String tenantId = AuthenticationUtil.extractCredential(requestMap, TENANT_KEY, "租户(tenant)是必填项");
             authentication = new UsernameAuthentication(tenantId, username, password);
         } else {
