@@ -70,34 +70,8 @@ logging:
     org.lemon: debug
     org.springframework: warn
     org.springframework.security: debug
-    org.mybatis.spring.mapper: error
-    org.apache.fury: warn
+    org.mybatis.spring.mapper: debug
   config: classpath:logback-plus.xml
-
-# 自定义配置信息
-lemon:
-  # 权限认证
-  security:
-    token-header: Authorization
-    token-parameter: token
-    permit-all-urls:
-      - /favicon.ico    # 公共路径
-
-# 多租户配置
-tenant:
-  # 是否开启
-  enable: true
-  # 排除表
-  excludes:
-    - sys_menu
-    - sys_tenant
-    - sys_tenant_package
-    - sys_role_dept
-    - sys_role_menu
-    - sys_user_post
-    - sys_user_role
-    - sys_client
-    - sys_oss_config
 
 # MyBatisPlus配置
 # https://baomidou.com/config/
@@ -161,19 +135,32 @@ lock4j:
   # 分布式锁的超时时间，默认为 30 秒
   expire: 30000
 
---- # Actuator 监控端点的配置项
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-details: ALWAYS
-    logfile:
-      external-file: ./logs/sys-console.log
-
 --- # 默认/推荐使用sse推送
 sse:
   enabled: true
   path: /resource/sse
+
+# 自定义配置信息
+lemon:
+  # 权限认证
+  security:
+    token-header: Authorization
+    token-parameter: token
+    permit-all-urls:
+      - /favicon.ico    # 公共路径
+
+# 多租户配置
+tenant:
+  # 是否开启
+  enable: true
+  # 排除表
+  excludes:
+    - sys_menu
+    - sys_tenant
+    - sys_tenant_package
+    - sys_role_dept
+    - sys_role_menu
+    - sys_user_post
+    - sys_user_role
+    - sys_client
+    - sys_oss_config

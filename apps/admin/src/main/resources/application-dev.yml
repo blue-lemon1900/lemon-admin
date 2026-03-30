@@ -104,4 +104,4 @@ redisson:
 mybatis-plus:
   # 控制台打印执行的sql
   configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
