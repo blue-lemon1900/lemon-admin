@@ -39,7 +39,7 @@ public class SecurityBeanConfig {
     }
 
     /**
-     * 认证失败处理类 Bean
+     * 未认证（未登录）时的入口点处理器，返回 401 响应
      */
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
@@ -47,7 +47,7 @@ public class SecurityBeanConfig {
     }
 
     /**
-     * 权限不够处理器 Bean
+     * 已认证用户访问无权限资源时的处理器，返回 403 响应
      */
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
@@ -55,10 +55,8 @@ public class SecurityBeanConfig {
     }
 
     /**
-     * 注册 ContextPropagatingTaskDecorator，用于在 @Async 异步任务执行时
-     * 自动将当前线程的上下文（含 SecurityContext）传播至子线程/虚拟线程。
-     * Spring Boot 4 的 TaskExecutionAutoConfiguration 会自动将所有 TaskDecorator Bean
-     * 组合为 CompositeTaskDecorator 应用到 AsyncTaskExecutor 上。
+     * 异步任务上下文传播装饰器，自动将 SecurityContext 等上下文传播至 @Async 子线程。
+     * Spring Boot 4 会将所有 TaskDecorator Bean 组合后应用到 AsyncTaskExecutor。
      */
     @Bean
     public TaskDecorator contextPropagatingTaskDecorator() {
@@ -66,9 +64,7 @@ public class SecurityBeanConfig {
     }
 
     /**
-     * 登录失败
-     *
-     * @return
+     * 登录认证失败处理器，认证不通过时触发
      */
     @Bean
     public AuthenticationFailureHandler authenticationFailureHandler() {
@@ -76,9 +72,7 @@ public class SecurityBeanConfig {
     }
 
     /**
-     * 登录成功
-     *
-     * @return
+     * 登录认证成功处理器，认证通过后触发
      */
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
@@ -86,12 +80,11 @@ public class SecurityBeanConfig {
     }
 
     /**
-     * 帐号密码登录认证
+     * 账号密码登录认证
      *
      * @param usernameService 查询用户信息类
      * @param passwordEncoder 密码加密
      * @param tenantEnable    是否开启租户
-     * @return
      */
     @Bean
     public UsernameAuthenticationProvider usernameAuthenticationProvider(UsernameService usernameService,
@@ -101,9 +94,7 @@ public class SecurityBeanConfig {
     }
 
     /**
-     * 使用 Spring Security 的缩写，方便使用
-     *
-     * @return
+     * Security 工具服务，提供获取当前登录用户、权限判断等常用方法，Bean 名称 "ss" 方便在 SpEL 中引用
      */
     @Bean("ss")
     public SecurityFrameworkService securityFrameworkService() {
@@ -111,9 +102,8 @@ public class SecurityBeanConfig {
     }
 
     /**
-     * 通过声明 FilterRegistrationBean bean,这使得 HttpSecurity 成为唯一添加它的
-     *
-     * @return
+     * 阻止 Spring Boot 将 GlobalSpringSecurityExceptionFilter 自动注册到 Servlet 容器，
+     * 由 HttpSecurity 手动将其加入过滤器链，避免重复执行
      */
     @Bean
     public FilterRegistrationBean<GlobalSpringSecurityExceptionFilter> tenantFilterRegistration() {
