@@ -12,6 +12,7 @@ import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.lemon.commons.core.exceptions.ServiceException;
 import org.lemon.commons.core.utils.StreamUtils;
 import org.lemon.commons.core.utils.spring.SpringUtils;
@@ -109,7 +110,7 @@ public class PlusDataPermissionHandler {
         LoginUserInfo user = DataPermissionHelper.getVariable("user");
         Object defaultValue = "-1";
         NullSafeStandardEvaluationContext context = new NullSafeStandardEvaluationContext(defaultValue);
-        context.addPropertyAccessor(new NullSafePropertyAccessor(context.getPropertyAccessors().get(0), defaultValue));
+        context.addPropertyAccessor(new NullSafePropertyAccessor(context.getPropertyAccessors().getFirst(), defaultValue));
         context.setBeanResolver(beanResolver);
         DataPermissionHelper.getContext().forEach(context::setVariable);
         Set<String> conditions = new HashSet<>();
@@ -241,7 +242,7 @@ public class PlusDataPermissionHandler {
         }
 
         @Override
-        public TypedValue read(@NonNull EvaluationContext context, Object target, @NonNull String name) throws AccessException {
+        public TypedValue read(@NonNull EvaluationContext context, @Nullable Object target, @NonNull String name) throws AccessException {
             TypedValue value = delegate.read(context, target, name);
             // 如果读取到的值是 null，则返回默认值
             if (value.getValue() == null) {
