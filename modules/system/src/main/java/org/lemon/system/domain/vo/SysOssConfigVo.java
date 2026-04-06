@@ -1,6 +1,6 @@
 package org.lemon.system.domain.vo;
 
-import cn.idev.excel.annotation.ExcelIgnoreUnannotated;
+import org.apache.fesod.sheet.annotation.ExcelIgnoreUnannotated;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import org.lemon.system.domain.entity.SysOssConfig;
