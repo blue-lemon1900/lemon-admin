@@ -1,7 +1,7 @@
 package org.lemon.commons.excel.utils;
 
 import org.apache.fesod.sheet.ExcelWriter;
-import org.apache.fesod.sheet.FastExcel;
+import org.apache.fesod.sheet.FesodSheet;
 import org.apache.fesod.sheet.context.WriteContext;
 import org.apache.fesod.sheet.write.builder.ExcelWriterSheetBuilder;
 import org.apache.fesod.sheet.write.builder.ExcelWriterTableBuilder;
@@ -68,8 +68,6 @@ public record ExcelWriterWrapper<T>(ExcelWriter excelWriter) {
         return new ExcelWriterWrapper<>(excelWriter);
     }
 
-    // -------------------------------- sheet start
-
     public static WriteSheet buildSheet(Integer sheetNo, String sheetName) {
         return sheetBuilder(sheetNo, sheetName).build();
     }
@@ -87,24 +85,20 @@ public record ExcelWriterWrapper<T>(ExcelWriter excelWriter) {
     }
 
     public static ExcelWriterSheetBuilder sheetBuilder(Integer sheetNo, String sheetName) {
-        return FastExcel.writerSheet(sheetNo, sheetName);
+        return FesodSheet.writerSheet(sheetNo, sheetName);
     }
 
     public static ExcelWriterSheetBuilder sheetBuilder(Integer sheetNo) {
-        return FastExcel.writerSheet(sheetNo);
+        return FesodSheet.writerSheet(sheetNo);
     }
 
     public static ExcelWriterSheetBuilder sheetBuilder(String sheetName) {
-        return FastExcel.writerSheet(sheetName);
+        return FesodSheet.writerSheet(sheetName);
     }
 
     public static ExcelWriterSheetBuilder sheetBuilder() {
-        return FastExcel.writerSheet();
+        return FesodSheet.writerSheet();
     }
-
-    // -------------------------------- sheet end
-
-    // -------------------------------- table start
 
     public static WriteTable buildTable(Integer tableNo) {
         return tableBuilder(tableNo).build();
@@ -115,13 +109,10 @@ public record ExcelWriterWrapper<T>(ExcelWriter excelWriter) {
     }
 
     public static ExcelWriterTableBuilder tableBuilder(Integer tableNo) {
-        return FastExcel.writerTable(tableNo);
+        return FesodSheet.writerTable(tableNo);
     }
 
     public static ExcelWriterTableBuilder tableBuilder() {
-        return FastExcel.writerTable();
+        return FesodSheet.writerTable();
     }
-
-    // -------------------------------- table end
-
 }

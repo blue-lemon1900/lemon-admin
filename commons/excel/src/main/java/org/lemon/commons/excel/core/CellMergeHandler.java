@@ -3,10 +3,10 @@ package org.lemon.commons.excel.core;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
+import lombok.SneakyThrows;
 import org.apache.fesod.sheet.annotation.ExcelIgnore;
 import org.apache.fesod.sheet.annotation.ExcelIgnoreUnannotated;
 import org.apache.fesod.sheet.annotation.ExcelProperty;
-import lombok.SneakyThrows;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.lemon.commons.core.utils.reflect.ReflectUtils;
 import org.lemon.commons.excel.annotation.CellMerge;
@@ -43,7 +43,7 @@ public class CellMergeHandler {
         }
 
         // 获取有合并注解的字段
-        Map<Field, FieldColumnIndex> mergeFields = getFieldColumnIndexMap(rows.get(0).getClass());
+        Map<Field, FieldColumnIndex> mergeFields = getFieldColumnIndexMap(rows.getFirst().getClass());
         // 如果没有需要合并的字段则返回空集
         if (CollUtil.isEmpty(mergeFields)) {
             return Collections.emptyList();

@@ -6,13 +6,13 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.metadata.FieldCache;
 import org.apache.fesod.sheet.metadata.FieldWrapper;
 import org.apache.fesod.sheet.util.ClassUtils;
 import org.apache.fesod.sheet.write.handler.SheetWriteHandler;
 import org.apache.fesod.sheet.write.metadata.holder.WriteSheetHolder;
 import org.apache.fesod.sheet.write.metadata.holder.WriteWorkbookHolder;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.WorkbookUtil;
@@ -262,10 +262,10 @@ public class ExcelDownHandler implements SheetWriteHandler {
                     continue;
                 }
                 // 取第一个
-                String str = data.get(0);
+                String str = data.getFirst();
                 rowData.add(str);
                 // 通过移除的方式避免重复
-                data.remove(0);
+                data.removeFirst();
                 // 设置可以继续
                 flag = true;
             }
