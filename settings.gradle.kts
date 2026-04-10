@@ -56,6 +56,9 @@ project(":tenant").projectDir = file("commons/tenant")
 include(":excel")
 project(":excel").projectDir = file("commons/excel")
 
+include(":mail")
+project(":mail").projectDir = file("commons/mail")
+
 /* ---------------------------------- 业务逻辑模块 ---------------------------------- */
 include(":system")
 project(":system").projectDir = file("modules/system")
