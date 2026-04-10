@@ -1,10 +1,9 @@
 package org.lemon.commons.tenant.config;
 
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
-import org.lemon.commons.core.config.properties.CaptchaProperties;
-import org.lemon.commons.tenant.config.properties.TenantProperties;
 import org.lemon.commons.redis.config.RedisConfig;
 import org.lemon.commons.redis.config.properties.RedissonProperties;
+import org.lemon.commons.tenant.config.properties.TenantProperties;
 import org.lemon.commons.tenant.handle.PlusTenantLineHandler;
 import org.lemon.commons.tenant.handle.TenantKeyPrefixHandler;
 import org.lemon.commons.tenant.manager.TenantSpringCacheManager;

@@ -10,14 +10,13 @@ import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInt
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import org.lemon.commons.core.factory.YmlPropertySourceFactory;
-import org.lemon.commons.core.utils.spring.SpringUtils;
 import org.lemon.commons.mybatis.aspect.DataPermissionPointcutAdvisor;
 import org.lemon.commons.mybatis.handler.InjectionMetaObjectHandler;
 import org.lemon.commons.mybatis.handler.MybatisExceptionHandler;
 import org.lemon.commons.mybatis.handler.PlusPostInitTableInfoHandler;
 import org.lemon.commons.mybatis.interceptor.PlusDataPermissionInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
@@ -25,7 +24,26 @@ import org.springframework.context.annotation.Role;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
- * mybatis-plus配置类(下方注释有插件介绍)
+ * MyBatis-Plus 配置类，已启用以下插件：
+ * <ul>
+ *   <li>{@link PaginationInnerInterceptor} 分页插件，自动识别数据库类型
+ *       — <a href="https://baomidou.com/pages/97710a/">文档</a></li>
+ *   <li>{@link OptimisticLockerInnerInterceptor} 乐观锁插件
+ *       — <a href="https://baomidou.com/pages/0d93c0/">文档</a></li>
+ *   <li>{@link MetaObjectHandler} 元对象字段填充控制器
+ *       — <a href="https://baomidou.com/pages/4c6bcf/">文档</a></li>
+ *   <li>ISqlInjector SQL 注入器
+ *       — <a href="https://baomidou.com/pages/42ea4a/">文档</a></li>
+ *   <li>BlockAttackInnerInterceptor 全表删除/更新拦截
+ *       — <a href="https://baomidou.com/pages/f9a237/">文档</a></li>
+ *   <li>IllegalSQLInnerInterceptor SQL 性能规范插件（垃圾 SQL 拦截）</li>
+ *   <li>{@link IdentifierGenerator} 自定义主键策略（雪花算法绑定网卡）
+ *       — <a href="https://baomidou.com/pages/568eb2/">文档</a></li>
+ *   <li>{@link TenantLineInnerInterceptor} 多租户插件
+ *       — <a href="https://baomidou.com/pages/aef2f2/">文档</a></li>
+ *   <li>DynamicTableNameInnerInterceptor 动态表名插件
+ *       — <a href="https://baomidou.com/pages/2a45ff/">文档</a></li>
+ * </ul>
  *
  * @author Lion Li
  */
@@ -36,14 +54,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class MybatisPlusConfig {
 
     @Bean
-    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+    public MybatisPlusInterceptor mybatisPlusInterceptor(ObjectProvider<TenantLineInnerInterceptor> tenantLineInnerInterceptorProvider) {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        // 多租户插件 必须放到第一位
-        try {
-            TenantLineInnerInterceptor tenant = SpringUtils.getBean(TenantLineInnerInterceptor.class);
-            interceptor.addInnerInterceptor(tenant);
-        } catch (BeansException ignore) {
-        }
+
+        // 多租户插件 必须放到第一位，有 Bean 则注入，无则跳过
+        tenantLineInnerInterceptorProvider.ifAvailable(interceptor::addInnerInterceptor);
         // 数据权限处理
         interceptor.addInnerInterceptor(dataPermissionInterceptor());
         // 分页插件
@@ -118,25 +133,4 @@ public class MybatisPlusConfig {
     public PostInitTableInfoHandler postInitTableInfoHandler() {
         return new PlusPostInitTableInfoHandler();
     }
-
-    /**
-     * PaginationInnerInterceptor 分页插件，自动识别数据库类型
-     * https://baomidou.com/pages/97710a/
-     * OptimisticLockerInnerInterceptor 乐观锁插件
-     * https://baomidou.com/pages/0d93c0/
-     * MetaObjectHandler 元对象字段填充控制器
-     * https://baomidou.com/pages/4c6bcf/
-     * ISqlInjector sql注入器
-     * https://baomidou.com/pages/42ea4a/
-     * BlockAttackInnerInterceptor 如果是对全表的删除或更新操作，就会终止该操作
-     * https://baomidou.com/pages/f9a237/
-     * IllegalSQLInnerInterceptor sql性能规范插件(垃圾SQL拦截)
-     * IdentifierGenerator 自定义主键策略
-     * https://baomidou.com/pages/568eb2/
-     * TenantLineInnerInterceptor 多租户插件
-     * https://baomidou.com/pages/aef2f2/
-     * DynamicTableNameInnerInterceptor 动态表名插件
-     * https://baomidou.com/pages/2a45ff/
-     */
-
 }

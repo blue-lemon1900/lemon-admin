@@ -8,8 +8,8 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.NullValue;
 import net.sf.jsqlparser.expression.StringValue;
 import org.apache.commons.lang3.Strings;
-import org.lemon.commons.tenant.config.properties.TenantProperties;
 import org.lemon.commons.core.utils.StringUtils;
+import org.lemon.commons.tenant.config.properties.TenantProperties;
 import org.lemon.commons.tenant.helper.TenantHelper;
 
 import java.util.List;
