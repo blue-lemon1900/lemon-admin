@@ -77,7 +77,7 @@ public class SecurityConfig {
                                                 AuthenticationFailureHandler authenticationFailureHandler,
                                                 CaptchaService captchaService,
                                                 CaptchaProperties captchaProperties,
-                                                @Value("${tenant.enable:true}") boolean tenantEnable) {
+                                                @Value("${tenant.enable:false}") boolean tenantEnable) {
         commonHttpSetting(http);
 
         // 复用同一个 builder 实例，避免重复调用 PathPatternRequestMatcher.withDefaults()

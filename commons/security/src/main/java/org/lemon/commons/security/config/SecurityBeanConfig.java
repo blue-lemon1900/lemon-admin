@@ -89,7 +89,7 @@ public class SecurityBeanConfig {
     @Bean
     public UsernameAuthenticationProvider usernameAuthenticationProvider(UsernameService usernameService,
                                                                          PasswordEncoder passwordEncoder,
-                                                                         @Value("${tenant.enable:true}") boolean tenantEnable) {
+                                                                         @Value("${tenant.enable:false}") boolean tenantEnable) {
         return new UsernameAuthenticationProvider(usernameService, passwordEncoder, tenantEnable);
     }
 
