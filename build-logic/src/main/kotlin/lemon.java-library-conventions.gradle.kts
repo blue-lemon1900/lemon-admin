@@ -1,26 +1,16 @@
-import gradle.kotlin.dsl.accessors._63287c54d84282e5815fad8cda0586b7.annotationProcessor
 import org.springframework.boot.gradle.plugin.SpringBootPlugin
 
-// 约定插件：lemon.java-library-conventions
-// 适用范围：commons/*, modules/* 下的公共库模块
 plugins {
-    // java-library 插件：适合库模块，相比 java 插件额外提供了 api / implementation 依赖分离
-    // api：依赖会暴露给使用此库的模块（编译期可见）
-    // implementation：依赖仅内部使用，不会泄漏给上层模块（推荐默认使用）
     `java-library`
 }
 
-// 统一 Maven 坐标
 group = "org.lemon"
 version = "0.0.1"
 
-// 统一依赖仓库
 repositories {
     mavenCentral()
 }
 
-// 统一 Java 工具链版本
-// 工具链（toolchain）会自动检测或下载对应 JDK，无需手动配置 JAVA_HOME
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(25)
@@ -29,6 +19,10 @@ java {
 
 tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.add("-parameters")
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }
 
 dependencies {
@@ -54,6 +48,8 @@ dependencies {
 
     // 覆盖测试代码的编译期和运行期依赖
     testImplementation(springBom)
+    // Gradle 9.x 要求显式声明 JUnit Platform launcher
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     // 覆盖测试注解处理器的独立解析路径
     testAnnotationProcessor(springBom)

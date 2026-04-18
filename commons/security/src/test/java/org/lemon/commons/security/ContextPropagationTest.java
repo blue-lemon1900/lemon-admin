@@ -1,4 +1,4 @@
-package org.lemon;
+package org.lemon.commons.security;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -8,11 +8,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.task.AsyncTaskExecutor;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskDecorator;
 import org.springframework.core.task.support.ContextPropagatingTaskDecorator;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -117,7 +117,9 @@ class ContextPropagationTest {
             return new ContextPropagatingTaskDecorator();
         }
 
-        /** 平台线程 Executor，挂载 TaskDecorator */
+        /**
+         * 平台线程 Executor，挂载 TaskDecorator
+         */
         @Bean("platformThreadExecutor")
         public AsyncTaskExecutor platformThreadExecutor(TaskDecorator taskDecorator) {
             ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
@@ -127,7 +129,9 @@ class ContextPropagationTest {
             return executor;
         }
 
-        /** 虚拟线程 Executor，挂载 TaskDecorator（对应生产环境 spring.threads.virtual.enabled=true） */
+        /**
+         * 虚拟线程 Executor，挂载 TaskDecorator（对应生产环境 spring.threads.virtual.enabled=true）
+         */
         @Bean("virtualThreadExecutor")
         public AsyncTaskExecutor virtualThreadExecutor(TaskDecorator taskDecorator) {
             SimpleAsyncTaskExecutor executor = new SimpleAsyncTaskExecutor("test-virtual-");
@@ -144,21 +148,27 @@ class ContextPropagationTest {
     @Service
     static class AsyncProbeService {
 
-        /** 在平台线程上捕获当前认证用户名 */
+        /**
+         * 在平台线程上捕获当前认证用户名
+         */
         @Async("platformThreadExecutor")
         public CompletableFuture<String> captureUsername() {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             return CompletableFuture.completedFuture(auth != null ? auth.getName() : null);
         }
 
-        /** 在虚拟线程上捕获当前认证用户名 */
+        /**
+         * 在虚拟线程上捕获当前认证用户名
+         */
         @Async("virtualThreadExecutor")
         public CompletableFuture<String> captureUsernameOnVirtualThread() {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             return CompletableFuture.completedFuture(auth != null ? auth.getName() : null);
         }
 
-        /** 确认当前线程是否为虚拟线程 */
+        /**
+         * 确认当前线程是否为虚拟线程
+         */
         @Async("virtualThreadExecutor")
         public CompletableFuture<Boolean> isVirtualThread() {
             return CompletableFuture.completedFuture(Thread.currentThread().isVirtual());

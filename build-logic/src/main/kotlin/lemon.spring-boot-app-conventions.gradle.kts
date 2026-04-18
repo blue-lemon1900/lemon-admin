@@ -1,23 +1,17 @@
 import org.springframework.boot.gradle.plugin.SpringBootPlugin
 
-// 约定插件：lemon.spring-boot-app-conventions
-// 适用范围：apps/* 下的可执行 Spring Boot 应用模块
-// 使用方式：在子模块的 build.gradle.kts 中声明 id("lemon.spring-boot-app-conventions")
 plugins {
     java
     id("org.springframework.boot")
 }
 
-// 统一 Maven 坐标
 group = "org.lemon"
 version = "0.0.1"
 
-// 统一依赖仓库
 repositories {
     mavenCentral()
 }
 
-// 统一 Java 工具链版本
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(25)
@@ -38,6 +32,9 @@ dependencies {
     implementation(springBom)
     implementation(hutoolBom)
     implementation(mybatisPlusBom)
+
+    // 应用启动类所需的基础依赖（@SpringBootApplication 等）
+    implementation("org.springframework.boot:spring-boot-starter")
 
     // 覆盖注解处理器的独立解析路径
     annotationProcessor(springBom)
