@@ -1,4 +1,3 @@
-Lemon Application Version: ${revision}
 Spring Boot Version: ${spring-boot.version}
 
  ___        _______    _____ ______    ________   ________
