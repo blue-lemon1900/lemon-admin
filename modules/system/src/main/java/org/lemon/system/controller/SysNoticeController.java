@@ -2,7 +2,7 @@ package org.lemon.system.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.lemon.commons.core.domain.result.R;
-import org.lemon.commons.core.service.DictService;
+import org.lemon.commons.systemapi.service.DictService;
 import org.lemon.commons.idempotent.annotation.RepeatSubmit;
 import org.lemon.commons.log.annotation.Log;
 import org.lemon.commons.log.enums.BusinessType;

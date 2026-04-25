@@ -15,7 +15,7 @@ import org.lemon.commons.core.constant.CacheNames;
 import org.lemon.commons.core.constant.SystemConstants;
 import org.lemon.commons.core.constant.TenantConstants;
 import org.lemon.commons.core.exceptions.ServiceException;
-import org.lemon.commons.core.service.RoleService;
+import org.lemon.commons.systemapi.service.RoleService;
 import org.lemon.commons.core.utils.MapstructUtils;
 import org.lemon.commons.core.utils.StreamUtils;
 import org.lemon.commons.core.utils.StringUtils;

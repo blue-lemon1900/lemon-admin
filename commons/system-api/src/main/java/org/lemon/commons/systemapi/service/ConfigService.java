@@ -1,4 +1,4 @@
-package org.lemon.commons.core.service;
+package org.lemon.commons.systemapi.service;
 
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.Dict;

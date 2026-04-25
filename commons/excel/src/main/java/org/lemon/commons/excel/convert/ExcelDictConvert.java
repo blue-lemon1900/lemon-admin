@@ -10,7 +10,7 @@ import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
-import org.lemon.commons.core.service.DictService;
+import org.lemon.commons.systemapi.service.DictService;
 import org.lemon.commons.core.utils.StringUtils;
 import org.lemon.commons.core.utils.spring.SpringUtils;
 import org.lemon.commons.excel.annotation.ExcelDictFormat;

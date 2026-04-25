@@ -1,6 +1,6 @@
-package org.lemon.commons.core.service;
+package org.lemon.commons.systemapi.service;
 
-import org.lemon.commons.core.domain.dto.OssDTO;
+import org.lemon.commons.systemapi.domain.dto.OssDTO;
 
 import java.util.List;
 

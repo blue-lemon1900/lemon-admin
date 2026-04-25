@@ -6,5 +6,6 @@ description = "通用翻译功能模块"
 
 dependencies {
     implementation(project(":json"))
+    implementation(project(":system-api"))
 }
 

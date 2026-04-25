@@ -1,7 +1,7 @@
 package org.lemon.commons.translation.core.impl;
 
 import lombok.AllArgsConstructor;
-import org.lemon.commons.core.service.OssService;
+import org.lemon.commons.systemapi.service.OssService;
 import org.lemon.commons.translation.annotation.TranslationType;
 import org.lemon.commons.translation.constant.TransConstant;
 import org.lemon.commons.translation.core.TranslationInterface;

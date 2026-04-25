@@ -11,7 +11,7 @@ import org.apache.commons.lang3.Strings;
 import org.lemon.commons.core.constant.CacheNames;
 import org.lemon.commons.core.constant.SystemConstants;
 import org.lemon.commons.core.exceptions.ServiceException;
-import org.lemon.commons.core.service.ConfigService;
+import org.lemon.commons.systemapi.service.ConfigService;
 import org.lemon.commons.core.utils.MapstructUtils;
 import org.lemon.commons.core.utils.ObjectUtils;
 import org.lemon.commons.core.utils.StringUtils;

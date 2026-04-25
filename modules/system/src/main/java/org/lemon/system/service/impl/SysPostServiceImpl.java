@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.lemon.commons.core.constant.SystemConstants;
 import org.lemon.commons.core.exceptions.ServiceException;
-import org.lemon.commons.core.service.PostService;
+import org.lemon.commons.systemapi.service.PostService;
 import org.lemon.commons.core.utils.MapstructUtils;
 import org.lemon.commons.core.utils.StreamUtils;
 import org.lemon.commons.core.utils.StringUtils;

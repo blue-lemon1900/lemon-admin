@@ -2,7 +2,7 @@ package org.lemon.system.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.lemon.commons.core.constant.TenantConstants;
-import org.lemon.commons.core.service.PermissionService;
+import org.lemon.commons.systemapi.service.PermissionService;
 import org.lemon.commons.security.utils.SecurityUtil;
 import org.lemon.system.service.ISysMenuService;
 import org.lemon.system.service.ISysPermissionService;

@@ -1,4 +1,4 @@
-package org.lemon.commons.core.domain.dto;
+package org.lemon.commons.systemapi.domain.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

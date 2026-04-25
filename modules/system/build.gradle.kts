@@ -6,6 +6,7 @@ description = "系统基础功能,业务逻辑模块"
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":system-api"))
     implementation(project(":json"))
     implementation(project(":sensitive"))
     implementation(project(":oss"))

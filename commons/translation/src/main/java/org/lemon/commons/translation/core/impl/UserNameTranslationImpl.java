@@ -2,7 +2,7 @@ package org.lemon.commons.translation.core.impl;
 
 import cn.hutool.core.convert.Convert;
 import lombok.AllArgsConstructor;
-import org.lemon.commons.core.service.UserService;
+import org.lemon.commons.systemapi.service.UserService;
 import org.lemon.commons.translation.annotation.TranslationType;
 import org.lemon.commons.translation.constant.TransConstant;
 import org.lemon.commons.translation.core.TranslationInterface;

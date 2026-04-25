@@ -1,7 +1,7 @@
-package org.lemon.commons.core.service;
+package org.lemon.commons.systemapi.service;
 
-import org.lemon.commons.core.domain.dto.DictDataDTO;
-import org.lemon.commons.core.domain.dto.DictTypeDTO;
+import org.lemon.commons.systemapi.domain.dto.DictDataDTO;
+import org.lemon.commons.systemapi.domain.dto.DictTypeDTO;
 
 import java.util.List;
 import java.util.Map;
