@@ -67,10 +67,10 @@ logging:
     # 日志文件位置
     path: ./apps/admin/logs
   level:
-    org.lemon: debug
+    org.lemon: info
     org.springframework: warn
-    org.springframework.security: debug
-    org.mybatis.spring.mapper: debug
+    org.springframework.security: warn
+    org.mybatis.spring.mapper: warn
   config: classpath:logback-plus.xml
 
 # MyBatisPlus配置
