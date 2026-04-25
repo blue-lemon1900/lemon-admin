@@ -1,5 +1,8 @@
 [versions]
 spring-boot = "4.0.5"
+hutool = "5.8.44"
+mybatis-plus = "3.5.16"
+mapstruct-plus = "1.5.0"
 ip2region = "3.3.4"
 redisson = "4.3.0"
 redisson-cache = "4.3.0"
@@ -13,7 +16,16 @@ fesod-sheet = "2.0.1-incubating"
 bcprov-jdk15to18 = "1.80"
 
 [libraries]
+# BOM（约定插件中通过 platform() 引入，统一对齐版本）
+spring-boot-bom = { group = "org.springframework.boot", name = "spring-boot-dependencies", version.ref = "spring-boot" }
+hutool-bom = { group = "cn.hutool", name = "hutool-bom", version.ref = "hutool" }
+mybatis-plus-bom = { group = "com.baomidou", name = "mybatis-plus-bom", version.ref = "mybatis-plus" }
+mapstruct-plus-bom = { group = "io.github.linpeilie", name = "mapstruct-plus-pom", version.ref = "mapstruct-plus" }
+mapstruct-plus-processor = { group = "io.github.linpeilie", name = "mapstruct-plus-processor", version.ref = "mapstruct-plus" }
+
+# Gradle 插件依赖（build-logic 自身使用）
 spring-boot-gradle-plugin = { group = "org.springframework.boot", name = "spring-boot-gradle-plugin", version.ref = "spring-boot" }
+
 ip2region = { group = "org.lionsoul", name = "ip2region", version.ref = "ip2region" }
 redisson = { group = "org.redisson", name = "redisson-spring-boot-starter", version.ref = "redisson" }
 redisson-cache = { group = "org.redisson", name = "redisson-spring-cache", version.ref = "redisson-cache" }
