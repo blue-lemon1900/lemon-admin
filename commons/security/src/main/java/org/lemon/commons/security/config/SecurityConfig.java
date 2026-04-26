@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lemon.commons.core.config.properties.CaptchaProperties;
 import org.lemon.commons.security.authorization.AnonymousAccessAuthorizationManager;
-import org.lemon.commons.security.authorization.AuthorizeRequestsCustomizer;
 import org.lemon.commons.security.config.properties.LemonSecurityProperties;
 import org.lemon.commons.security.filter.GlobalSpringSecurityExceptionFilter;
 import org.lemon.commons.security.filter.TokenAuthenticationFilter;
@@ -38,7 +37,6 @@ import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.web.savedrequest.NullRequestCache;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
-import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -108,7 +106,6 @@ public class SecurityConfig {
      * {@code @AnonymousAccess} 注解 + {@code lemon.security.permit-all-urls} 配置。
      *
      * @param http                                基于Web的请求配置类
-     * @param authorizeRequestsCustomizers        模块自定义的权限映射 Bean（高优先级覆盖）
      * @param lemonSecurityProperties             security 配置参数
      * @param authenticationEntryPoint            认证失败处理类
      * @param accessDeniedHandler                 权限不够处理器
@@ -118,7 +115,6 @@ public class SecurityConfig {
     @Bean
     @Order(2)
     public SecurityFilterChain filterChain(HttpSecurity http,
-                                           List<AuthorizeRequestsCustomizer> authorizeRequestsCustomizers,
                                            LemonSecurityProperties lemonSecurityProperties,
                                            AuthenticationEntryPoint authenticationEntryPoint,
                                            AccessDeniedHandler accessDeniedHandler,
@@ -127,14 +123,11 @@ public class SecurityConfig {
         commonHttpSetting(http);
 
         // 授权规则
-        http.authorizeHttpRequests(registry -> {
-            // 放行异步 dispatch（AuthorizationFilter 在每次 dispatch 都会跑）
-            registry.dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll();
-            // 模块自定义规则（最高优先级，例如显式 hasRole / hasAuthority）
-            authorizeRequestsCustomizers.forEach(customizer -> customizer.customize(registry));
-            // 兜底：由 AuthorizationManager 统一判定 [匿名白名单 OR 已认证]
-            registry.anyRequest().access(anonymousAccessAuthorizationManager);
-        });
+        http.authorizeHttpRequests(registry -> registry
+                // 放行异步 dispatch（AuthorizationFilter 在每次 dispatch 都会跑）
+                .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll()
+                // 兜底：由 AuthorizationManager 统一判定 [匿名白名单 OR 已认证]
+                .anyRequest().access(anonymousAccessAuthorizationManager));
 
         // 异常处理（仅对鉴权链生效，登录链由 success/failureHandler 直接响应）
         http.exceptionHandling(c -> c
