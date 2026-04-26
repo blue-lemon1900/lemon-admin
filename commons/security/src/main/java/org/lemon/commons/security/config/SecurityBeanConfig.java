@@ -10,6 +10,7 @@ import org.lemon.commons.security.login.username.UsernameAuthenticationProvider;
 import org.lemon.commons.security.service.SecurityFrameworkService;
 import org.lemon.commons.security.service.UsernameService;
 import org.lemon.commons.security.service.impl.SecurityFrameworkServiceImpl;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -24,6 +25,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @AutoConfiguration
 @AutoConfigureOrder(-1)
@@ -103,12 +105,14 @@ public class SecurityBeanConfig {
 
     /**
      * 阻止 Spring Boot 将 GlobalSpringSecurityExceptionFilter 自动注册到 Servlet 容器，
-     * 由 HttpSecurity 手动将其加入过滤器链，避免重复执行
+     * 由 HttpSecurity 手动将其加入过滤器链，避免重复执行。
+     * <p>
+     * 注入 MVC 的 {@code handlerExceptionResolver}，让 Filter 链中的非安全异常委托给
+     * {@code @RestControllerAdvice}（{@code GlobalExceptionHandler}）统一处理。
      */
     @Bean
-    public FilterRegistrationBean<GlobalSpringSecurityExceptionFilter> tenantFilterRegistration() {
-        // 处理全局异常的 Filter
-        GlobalSpringSecurityExceptionFilter filter = new GlobalSpringSecurityExceptionFilter();
+    public FilterRegistrationBean<GlobalSpringSecurityExceptionFilter> tenantFilterRegistration(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver handlerExceptionResolver) {
+        GlobalSpringSecurityExceptionFilter filter = new GlobalSpringSecurityExceptionFilter(handlerExceptionResolver);
         FilterRegistrationBean<GlobalSpringSecurityExceptionFilter> registration = new FilterRegistrationBean<>(filter);
 
         // 并将其 enabled 属性设置为 false 来告诉 Spring Boot 不要将其注册到容器中

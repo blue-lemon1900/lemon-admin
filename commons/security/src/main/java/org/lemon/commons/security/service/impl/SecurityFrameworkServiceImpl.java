@@ -24,7 +24,7 @@ public class SecurityFrameworkServiceImpl implements SecurityFrameworkService {
     @Override
     public boolean hasPermission(String permission) {
         if (StringUtils.isEmpty(permission)) {
-            throw new AccessDeniedException("校验的权限值不能为空");
+            throw new IllegalArgumentException("校验的权限值不能为空");
         }
 
         // 获取登录用户信息
@@ -41,7 +41,7 @@ public class SecurityFrameworkServiceImpl implements SecurityFrameworkService {
     @Override
     public boolean hasAnyPermissions(String... permissions) {
         if (ArrayUtils.isEmpty(permissions)) {
-            throw new AccessDeniedException("校验的权限值不能为空");
+            throw new IllegalArgumentException("校验的权限值不能为空");
         }
 
         // 获取登录用户信息
@@ -78,7 +78,7 @@ public class SecurityFrameworkServiceImpl implements SecurityFrameworkService {
     @Override
     public boolean hasAnyRoles(String... roles) {
         if (ArrayUtils.isEmpty(roles)) {
-            throw new AccessDeniedException("校验的角色值不能为空");
+            throw new IllegalArgumentException("校验的角色值不能为空");
         }
 
         // 获取当前登录用户

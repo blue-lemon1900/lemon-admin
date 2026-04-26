@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.lemon.commons.json.utils.JsonUtils;
-import org.lemon.commons.security.exception.BadCaptchaException;
+import org.lemon.commons.core.exceptions.auth.BadCaptchaException;
 import org.lemon.commons.security.service.CaptchaService;
 import org.lemon.commons.security.utils.AuthenticationUtil;
 import org.lemon.commons.security.wrapper.RepeatedlyRequestWrapper;
