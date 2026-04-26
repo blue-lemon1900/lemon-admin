@@ -1,10 +1,10 @@
-package org.lemon.commons.systemapi.validate.dicts;
+package org.lemon.commons.validation.dicts;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.apache.commons.lang3.StringUtils;
-import org.lemon.commons.systemapi.service.DictService;
 import org.lemon.commons.core.utils.spring.SpringUtils;
+import org.lemon.commons.systemapi.service.DictService;
 
 /**
  * 自定义字典值校验器

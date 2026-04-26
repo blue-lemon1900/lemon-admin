@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.lemon.commons.core.domain.result.R;
-import org.lemon.commons.core.validate.QueryGroup;
+import org.lemon.commons.validation.group.QueryGroup;
 import org.lemon.commons.log.annotation.Log;
 import org.lemon.commons.log.enums.BusinessType;
 import org.lemon.commons.mybatis.core.page.PageQuery;

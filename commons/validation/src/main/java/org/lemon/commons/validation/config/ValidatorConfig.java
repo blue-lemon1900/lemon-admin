@@ -1,4 +1,4 @@
-package org.lemon.commons.core.config;
+package org.lemon.commons.validation.config;
 
 import jakarta.validation.Validator;
 import org.hibernate.validator.HibernateValidator;

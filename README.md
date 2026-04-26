@@ -32,6 +32,7 @@ lemon-admin
 │   ├── idempotent/       # 幂等：基于 Redis 的重复请求拦截
 │   ├── ratelimiter/      # 限流：接口限流控制
 │   ├── translation/      # 翻译：字典值自动翻译
+│   ├── validation/       # 校验：参数校验模块
 │   ├── tenant/           # 多租户：租户隔离与数据过滤
 │   └── excel/            # Excel：fesod 文件导入导出
 ├── modules/

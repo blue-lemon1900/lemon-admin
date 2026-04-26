@@ -14,6 +14,9 @@ project(":core").projectDir = file("commons/core")
 include(":system-api")
 project(":system-api").projectDir = file("commons/system-api")
 
+include(":validation")
+project(":validation").projectDir = file("commons/validation")
+
 include(":json")
 project(":json").projectDir = file("commons/json")
 

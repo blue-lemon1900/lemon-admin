@@ -1,4 +1,4 @@
-package org.lemon.commons.systemapi.validate.dicts;
+package org.lemon.commons.validation.dicts;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

@@ -1,4 +1,4 @@
-package org.lemon.commons.core.validate.enumd;
+package org.lemon.commons.validation.enumd;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

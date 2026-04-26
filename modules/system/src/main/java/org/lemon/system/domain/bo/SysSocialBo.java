@@ -6,8 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.lemon.commons.core.validate.AddGroup;
-import org.lemon.commons.core.validate.EditGroup;
+import org.lemon.commons.validation.group.AddGroup;
+import org.lemon.commons.validation.group.EditGroup;
 import org.lemon.commons.tenant.core.TenantEntity;
 import org.lemon.system.domain.entity.SysSocial;
 

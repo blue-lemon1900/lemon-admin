@@ -1,4 +1,4 @@
-package org.lemon.commons.core.validate;
+package org.lemon.commons.validation.group;
 
 /**
  * 校验分组 edit
