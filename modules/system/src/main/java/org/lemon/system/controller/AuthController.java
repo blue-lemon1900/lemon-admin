@@ -1,7 +1,6 @@
 package org.lemon.system.controller;
 
 import cn.hutool.core.collection.CollUtil;
-import jakarta.annotation.security.PermitAll;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +10,7 @@ import org.lemon.commons.core.utils.MapstructUtils;
 import org.lemon.commons.core.utils.StreamUtils;
 import org.lemon.commons.ratelimiter.annotation.RateLimiter;
 import org.lemon.commons.ratelimiter.enums.LimitType;
+import org.lemon.commons.security.annotation.AnonymousAccess;
 import org.lemon.commons.security.data.LoginUserInfo;
 import org.lemon.commons.security.data.vo.AuthLoginRespVO;
 import org.lemon.commons.security.service.UsernameService;
@@ -48,7 +48,7 @@ public class AuthController {
      * @param bo 包含刷新令牌的请求体
      * @return 含新令牌的用户信息
      */
-    @PermitAll
+    @AnonymousAccess
     @PostMapping("/refresh")
     public R<AuthLoginRespVO> refreshToken(@RequestBody @Validated RefreshTokenBo bo) {
         LoginUserInfo userInfo = usernameService.updateToken(bo.getRefreshToken());
@@ -72,7 +72,7 @@ public class AuthController {
      *
      * @return 租户列表
      */
-    @PermitAll
+    @AnonymousAccess
     @RateLimiter(time = 60, count = 20, limitType = LimitType.IP)
     @GetMapping("/tenant/list")
     public R<LoginTenantVo> tenantList(HttpServletRequest request) throws Exception {

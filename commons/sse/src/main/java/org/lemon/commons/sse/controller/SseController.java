@@ -1,8 +1,8 @@
 package org.lemon.commons.sse.controller;
 
-import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.lemon.commons.core.domain.result.R;
+import org.lemon.commons.security.annotation.AnonymousAccess;
 import org.lemon.commons.security.utils.SecurityUtil;
 import org.lemon.commons.sse.core.SseEmitterManager;
 import org.springframework.beans.factory.DisposableBean;
@@ -40,7 +40,7 @@ public class SseController implements DisposableBean {
     /**
      * 关闭 SSE 连接
      */
-    @PermitAll
+    @AnonymousAccess
     @GetMapping(value = "${sse.path}/close")
     public R<Void> close() {
         String tokenValue = SecurityUtil.getTokenValue();

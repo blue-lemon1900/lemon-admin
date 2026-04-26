@@ -1,9 +1,9 @@
 package org.lemon.system.controller;
 
-import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lemon.commons.core.domain.result.R;
+import org.lemon.commons.security.annotation.AnonymousAccess;
 import org.lemon.commons.security.data.vo.CaptchaVo;
 import org.lemon.commons.security.service.CaptchaService;
 import org.springframework.validation.annotation.Validated;
@@ -28,7 +28,7 @@ public class CaptchaController {
     /**
      * 生成验证码
      */
-    @PermitAll
+    @AnonymousAccess
     @GetMapping("/code")
     public R<CaptchaVo> getCode() {
         return R.success(captchaService.getCode());

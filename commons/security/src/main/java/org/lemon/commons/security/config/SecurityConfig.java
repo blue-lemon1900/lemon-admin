@@ -1,10 +1,11 @@
 package org.lemon.commons.security.config;
 
-import com.google.common.collect.Multimap;
 import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lemon.commons.core.config.properties.CaptchaProperties;
+import org.lemon.commons.security.authorization.AnonymousAccessAuthorizationManager;
+import org.lemon.commons.security.authorization.AuthorizeRequestsCustomizer;
 import org.lemon.commons.security.config.properties.LemonSecurityProperties;
 import org.lemon.commons.security.filter.GlobalSpringSecurityExceptionFilter;
 import org.lemon.commons.security.filter.TokenAuthenticationFilter;
@@ -12,7 +13,6 @@ import org.lemon.commons.security.login.captcha.CaptchaValidationFilter;
 import org.lemon.commons.security.login.username.UsernameAuthenticationFilter;
 import org.lemon.commons.security.login.username.UsernameAuthenticationProvider;
 import org.lemon.commons.security.service.CaptchaService;
-import org.lemon.commons.security.utils.AnnotationUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -37,12 +37,7 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.web.savedrequest.NullRequestCache;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
-import org.springframework.security.web.util.matcher.OrRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -78,9 +73,9 @@ public class SecurityConfig {
                                                 CaptchaService captchaService,
                                                 CaptchaProperties captchaProperties,
                                                 @Value("${tenant.enable:false}") boolean tenantEnable) {
+        // 禁用默认 Filter
         commonHttpSetting(http);
 
-        // 复用同一个 builder 实例，避免重复调用 PathPatternRequestMatcher.withDefaults()
         PathPatternRequestMatcher.Builder matcherBuilder = PathPatternRequestMatcher.withDefaults();
 
         UsernameAuthenticationFilter usernameLoginFilter = new UsernameAuthenticationFilter(
@@ -96,6 +91,7 @@ public class SecurityConfig {
                 .addFilterAfter(usernameLoginFilter, LogoutFilter.class)
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated());
 
+        // 是否开启验证码
         if (captchaProperties.getEnable()) {
             http.addFilterBefore(new CaptchaValidationFilter(captchaService), UsernameAuthenticationFilter.class);
         }
@@ -104,43 +100,40 @@ public class SecurityConfig {
     }
 
     /**
-     * Token 授权过滤链
+     * Token 授权过滤链。
+     * <p>
+     * 授权决策完全交由 {@link AnonymousAccessAuthorizationManager} 统一处理：
+     * 命中匿名白名单 → 放行；否则要求已认证。这样 {@link TokenAuthenticationFilter}
+     * 仅做 Token 解析，不再维护跳过列表，白名单的唯一来源是
+     * {@code @AnonymousAccess} 注解 + {@code lemon.security.permit-all-urls} 配置。
      *
-     * @param http                         基于Web的请求配置类
-     * @param authorizeRequestsCustomizers 自定义的权限映射 Bean
-     * @param lemonSecurityProperties      security配置参数
-     * @param requestMappingHandlerMapping Spring MVC 的请求映射处理器，用于获取所有控制器方法映射信息
-     * @param authenticationEntryPoint     认证失败处理类
-     * @param accessDeniedHandler          权限不够处理器
+     * @param http                                基于Web的请求配置类
+     * @param authorizeRequestsCustomizers        模块自定义的权限映射 Bean（高优先级覆盖）
+     * @param lemonSecurityProperties             security 配置参数
+     * @param authenticationEntryPoint            认证失败处理类
+     * @param accessDeniedHandler                 权限不够处理器
+     * @param anonymousAccessAuthorizationManager 匿名访问授权管理器
      * @return 访问授权过滤链路
      */
     @Bean
     @Order(2)
     public SecurityFilterChain filterChain(HttpSecurity http,
                                            List<AuthorizeRequestsCustomizer> authorizeRequestsCustomizers,
-                                           RequestMappingHandlerMapping requestMappingHandlerMapping,
                                            LemonSecurityProperties lemonSecurityProperties,
                                            AuthenticationEntryPoint authenticationEntryPoint,
-                                           AccessDeniedHandler accessDeniedHandler) {
+                                           AccessDeniedHandler accessDeniedHandler,
+                                           AnonymousAccessAuthorizationManager anonymousAccessAuthorizationManager) {
+        // 禁用默认 Filter
         commonHttpSetting(http);
-
-        // 提取所有标注了 @PermitAll 的接口 URL（按 HTTP 方法分类），以及配置文件中的免认证路径。
-        // 这份数据同时用于：1、授权规则的 permitAll 配置；2、Token 过滤器的跳过规则。
-        Multimap<HttpMethod, String> permitAllUrls = AnnotationUtil.getPermitAllUrls(requestMappingHandlerMapping);
-        String[] configPermitUrls = lemonSecurityProperties.getPermitAllUrls();
 
         // 授权规则
         http.authorizeHttpRequests(registry -> {
-            // 放行 @PermitAll 接口
-            permitAllUrls.forEach((method, path) -> registry.requestMatchers(method, path).permitAll());
-            // 注册业务自定义规则
-            authorizeRequestsCustomizers.forEach(customizer -> customizer.customize(registry));
-            // 放行异步请求
+            // 放行异步 dispatch（AuthorizationFilter 在每次 dispatch 都会跑）
             registry.dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll();
-            // 放行配置文件中指定的路径
-            registry.requestMatchers(configPermitUrls).permitAll();
-            // 兜底：其余请求均需认证
-            registry.anyRequest().authenticated();
+            // 模块自定义规则（最高优先级，例如显式 hasRole / hasAuthority）
+            authorizeRequestsCustomizers.forEach(customizer -> customizer.customize(registry));
+            // 兜底：由 AuthorizationManager 统一判定 [匿名白名单 OR 已认证]
+            registry.anyRequest().access(anonymousAccessAuthorizationManager);
         });
 
         // 异常处理（仅对鉴权链生效，登录链由 success/failureHandler 直接响应）
@@ -149,38 +142,15 @@ public class SecurityConfig {
                 .accessDeniedHandler(accessDeniedHandler)
         );
 
-        // 添加 Token 校验 Filter，置于 ExceptionTranslationFilter 之后，
-        // 确保 Token 无效时抛出的 AuthenticationException 能被 ExceptionTranslationFilter
-        // 捕获并委托给 AuthenticationEntryPointImpl 返回 401，而不会被外层的
-        // GlobalSpringSecurityExceptionFilter 误当作 500 处理。
-        http.addFilterAfter(
-                new TokenAuthenticationFilter(lemonSecurityProperties, buildPermitAllMatcher(permitAllUrls, configPermitUrls)),
-                ExceptionTranslationFilter.class
-        );
+        // Token 解析 Filter，置于 ExceptionTranslationFilter 之后；
+        // 本 Filter 仅做 best-effort 解析，不抛异常、不拦截，最终授权由 AuthorizationFilter 决定。
+        http.addFilterAfter(new TokenAuthenticationFilter(lemonSecurityProperties), ExceptionTranslationFilter.class);
 
         return http.build();
     }
 
     /**
-     * 构建免 Token 校验的路径匹配器。
-     * <p>
-     * 将 @PermitAll 接口（按 HTTP 方法细分）与配置文件中的免认证路径合并为一个 OR 匹配器，
-     * 供 {@link TokenAuthenticationFilter#shouldNotFilter} 使用：命中任意规则即跳过 Token 校验。
-     *
-     * @param permitAllUrls 从 @PermitAll 注解提取的 URL（按 HTTP 方法分类）
-     * @param configUrls    配置文件 lemon.security.permit-all-urls 中的路径（不限 HTTP 方法）
-     * @return 合并后的 OR 匹配器
-     */
-    private RequestMatcher buildPermitAllMatcher(Multimap<HttpMethod, String> permitAllUrls, String[] configUrls) {
-        PathPatternRequestMatcher.Builder matcherBuilder = PathPatternRequestMatcher.withDefaults();
-        List<RequestMatcher> matchers = new ArrayList<>();
-        permitAllUrls.forEach((method, path) -> matchers.add(matcherBuilder.matcher(method, path)));
-        Arrays.stream(configUrls).forEach(path -> matchers.add(matcherBuilder.matcher(path)));
-        return new OrRequestMatcher(matchers);
-    }
-
-    /**
-     * 禁用不必要的默认filter（两条过滤链公共基础配置）
+     * 禁用默认 Filter（两条过滤链公共基础配置）
      *
      * @param http 基于Web的请求配置类
      */

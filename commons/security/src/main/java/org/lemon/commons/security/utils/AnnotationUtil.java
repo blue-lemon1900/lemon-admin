@@ -2,11 +2,11 @@ package org.lemon.commons.security.utils;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import jakarta.annotation.security.PermitAll;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.lemon.commons.security.annotation.AnonymousAccess;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
@@ -31,40 +31,25 @@ import java.util.stream.Collectors;
 public class AnnotationUtil {
 
     /**
-     * 提取所有被 @PermitAll 注解标记的接口 URL，并按 HTTP 方法分类返回。
+     * 提取所有被 {@link AnonymousAccess} 注解标记的接口 URL，并按 HTTP 方法分类返回。
      * <p>
-     * 实现逻辑：
-     * 1. 遍历所有注册的控制器方法。
-     * 2. 检查方法或类级别是否包含 @PermitAll 注解。
-     * 3. 收集匹配的 URL 模式及其支持的 HTTP 方法。
-     * <p>
-     * 典型用途：
-     * 在 Spring Security 配置中，将 permitAll 的 URL 动态加入白名单，避免硬编码。
+     * 收集结果作为 URL 白名单的唯一来源，供 {@code AnonymousAccessAuthorizationManager}
+     * 在请求期判定是否放行。
      *
      * @param handlerMapping Spring MVC 的请求映射处理器，用于获取所有控制器方法映射信息
-     * @return Multimap 结构：Key 为 HttpMethod 类型，Value 为对应允许匿名访问的 URL 集合
-     * 例如：{ GET: ["/api/public", "/docs"], POST: ["/login"] }
-     * <p>
-     * 注：
-     * <ul>
-     *   <li>URL 模式已合并类和方法级别的 @RequestMapping 路径（如 "/api" + "/user" -> "/api/user"）</li>
-     *   <li>若未明确指定 HTTP 方法（如 @RequestMapping 未设置 method），则默认匹配所有方法，需结合业务场景处理</li>
-     *   <li>支持 Ant 风格路径（如 "/resources/**"）</li>
-     * </ul>
+     * @return Multimap：Key 为 HttpMethod，Value 为允许匿名访问的 URL Pattern 集合
      */
-    public static Multimap<HttpMethod, String> getPermitAllUrls(RequestMappingHandlerMapping handlerMapping) {
+    public static Multimap<HttpMethod, String> getAnonymousAccessUrls(RequestMappingHandlerMapping handlerMapping) {
         Multimap<HttpMethod, String> result = HashMultimap.create();
 
-        // 获取 HandlerMapping 并强制转型
         Map<RequestMappingInfo, HandlerMethod> handlerMethods = handlerMapping.getHandlerMethods();
 
         for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
             HandlerMethod handlerMethod = entry.getValue();
             RequestMappingInfo mappingInfo = entry.getKey();
 
-            // 检查方法或类上是否标注了 @PermitAll
-            boolean methodLevel = handlerMethod.hasMethodAnnotation(PermitAll.class);
-            boolean classLevel = handlerMethod.getBeanType().isAnnotationPresent(PermitAll.class);
+            boolean methodLevel = handlerMethod.hasMethodAnnotation(AnonymousAccess.class);
+            boolean classLevel = handlerMethod.getBeanType().isAnnotationPresent(AnonymousAccess.class);
             if (!methodLevel && !classLevel) {
                 continue;
             }
