@@ -5,49 +5,36 @@ plugins {
 description = "核心模块"
 
 dependencies {
-    // Servlet 依赖
+    // Servlet：由 Servlet 容器在运行时提供
     compileOnlyApi("jakarta.servlet:jakarta.servlet-api")
-
-    // 编译期注解处理器，自动生成 getter/setter/构造器等样板代码
-    compileOnlyApi("org.projectlombok:lombok")
-    // Spring框架基本的核心工具
-    compileOnly("org.springframework:spring-context-support")
-    // SpringWeb模块
+    // Spring Web：仅在工具类签名中出现
     compileOnlyApi("org.springframework:spring-web")
+    // Lombok：编译期注解
+    compileOnlyApi("org.projectlombok:lombok")
 
-    // 自动生成YML配置关联JSON文件（annotationProcessor 由 java-library-conventions 统一声明）
-    runtimeOnly("org.springframework.boot:spring-boot-properties-migrator")
-
-    // Spring-AOP 相关依赖
+    // Spring AOP
     api("org.springframework:spring-aop")
     api("org.aspectj:aspectjweaver")
 
-    // 参数校验相关依赖
+    //  API 规范 jar（替代原 starter-validation 隐式带入的部分）
     api("jakarta.validation:jakarta.validation-api")
     api("jakarta.annotation:jakarta.annotation-api")
     api("org.slf4j:slf4j-api")
 
-    // 常用工具类
+    // 通用工具类
     api("org.apache.commons:commons-lang3")
-
-    // Apache Commons IO：文件、流操作工具类
     api(libs.commons.io)
-
-    // 离线IP地址定位库
-    api(libs.ip2region)
-
-    // hutool 工具库（版本由 BomCoordinates.HUTOOL 中的 hutool-bom 统一管理）
+    // Hutool 工具库
     api("cn.hutool:hutool-core")
     api("cn.hutool:hutool-http")
     api("cn.hutool:hutool-extra")
 
-    // MapStruct：编译期生成对象映射代码（DTO <-> Entity 转换）
+    // 离线 IP 地址定位
+    api(libs.ip2region)
+
+    // MapStruct：编译期生成 DTO <-> Entity 映射代码
     api("io.github.linpeilie:mapstruct-plus-spring-boot-starter")
 
-    // Netty 在 macOS 上有一个专门的原生 DNS 解析实现，能更准确地读取 macOS 系统的 DNS 配置。
-    implementation("io.netty:netty-resolver-dns-native-macos") {
-        artifact {
-            classifier = "osx-aarch_64"
-        }
-    }
+    // 检测 application.yml 中已弃用的配置键并提示迁移
+    runtimeOnly("org.springframework.boot:spring-boot-properties-migrator")
 }
