@@ -1,18 +1,15 @@
 # Lemon Admin
 
-基于 Spring Boot 4.0.3 + Java 25 的多模块后台管理系统脚手架，采用 Gradle 约定插件统一构建规范，支持多租户、分布式缓存、接口加密、SSE 推送等企业级特性。
+基于 Spring Boot 4.0.5 + Java 25 的多模块后台管理系统脚手架，采用 Gradle 约定插件统一构建规范，支持多租户、分布式缓存、接口加密、SSE 推送等企业级特性。
 
 ## 技术栈
 
 | 技术 | 版本 |
 |------|------|
-| Spring Boot | 4.0.3 |
 | Java | 25 |
+| Spring Boot | 4.0.5 |
 | MyBatis-Plus | 3.5.16 |
 | Redisson | 4.3.0 |
-| HuTool | 5.8.44 |
-| FastExcel | 1.3.0 |
-| AWS SDK (S3) | 2.28.22 |
 
 ## 项目结构
 
@@ -29,13 +26,14 @@ lemon-admin
 │   ├── log/              # 日志：操作日志记录
 │   ├── oss/              # 对象存储：AWS S3 兼容接口
 │   ├── sse/              # 服务端推送：SSE 长连接
+│   ├── system-api/       # 系统域服务契约（接口 + DTO + 字典验证器）
 │   ├── encrypt/          # 加解密：字段加密、API 请求加密
 │   ├── sensitive/        # 数据脱敏：手机号、身份证等字段脱敏
 │   ├── idempotent/       # 幂等：基于 Redis 的重复请求拦截
 │   ├── ratelimiter/      # 限流：接口限流控制
 │   ├── translation/      # 翻译：字典值自动翻译
 │   ├── tenant/           # 多租户：租户隔离与数据过滤
-│   └── excel/            # Excel：FastExcel 文件导入导出
+│   └── excel/            # Excel：fesod 文件导入导出
 ├── modules/
 │   └── system/           # 系统业务模块：用户、角色、菜单、部门等
 └── apps/
@@ -64,7 +62,7 @@ lemon-admin
 ./gradlew test
 
 # 运行指定测试类
-./gradlew test --tests "org.lemon.admin.SomeTest"
+./gradlew test --tests "org.lemon.admin.xxx"
 ```
 
 服务启动后访问：`http://localhost:8080`
