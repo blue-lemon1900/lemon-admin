@@ -66,20 +66,27 @@ lemon-admin
 ./gradlew test --tests "org.lemon.admin.xxx"
 ```
 
-服务启动后访问：`http://localhost:8080`
+服务启动后访问：`http://localhost:80`
 
 ## 配置说明
 
 核心配置文件：`apps/admin/src/main/resources/application.yml`
 
+项目自定义配置统一以 `lemon.*` 前缀承载，便于与 Spring/三方库配置一眼区分；老前缀（`tenant.*` / `xss.*` / `sse.*` / `api-decrypt.*` / `mybatis-encryptor.*` / `captcha.*`）已标记 deprecated，由 `spring-boot-properties-migrator` 在启动时自动迁移并打印告警。
+
 | 配置项 | 说明 |
 |--------|------|
-| `server.port` | 服务端口，默认 `8080` |
+| `server.port` | 服务端口，默认 `80` |
 | `spring.profiles.active` | 激活环境，默认 `dev` |
-| `tenant.enable` | 是否开启多租户，默认 `true` |
 | `lemon.security.token-header` | Token 请求头名称 |
 | `lemon.security.permit-all-urls` | 免认证白名单 |
-| `api-decrypt.enabled` | 是否开启接口加密，默认 `true` |
-| `xss.enabled` | 是否开启 XSS 防护，默认 `true` |
-| `sse.enabled` | 是否开启 SSE 推送，默认 `true` |
+| `lemon.security.password-encoder-id` | 新密码编码算法 id（`argon2` / `bcrypt` / `pbkdf2` / `scrypt`），默认 `argon2` |
+| `lemon.tenant.enable` | 是否开启多租户，默认 `true` |
+| `lemon.captcha.enable` | 是否开启验证码校验，默认 `true` |
+| `lemon.xss.enabled` | 是否开启 XSS 防护，默认 `true` |
+| `lemon.sse.enabled` | 是否开启 SSE 推送，默认 `true` |
+| `lemon.encrypt.api.enabled` | 是否开启接口加解密，默认 `true` |
+| `lemon.encrypt.mybatis.enable` | 是否开启 MyBatis 字段加密，默认 `false` |
+| `mybatis-plus.enable-logic-delete` | 是否全局启用逻辑删除，默认 `true` |
+| `mybatis-plus.mapper-package` | Mapper 接口扫描包路径 |
 | `logging.file.path` | 日志输出目录 |
