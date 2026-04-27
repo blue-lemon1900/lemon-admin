@@ -37,7 +37,7 @@ public class TenantHelper {
      * 租户功能是否启用
      */
     public static boolean isEnable() {
-        return Convert.toBool(SpringUtils.getProperty("tenant.enable"), false);
+        return Convert.toBool(SpringUtils.getProperty("lemon.tenant.enable"), false);
     }
 
     /**
