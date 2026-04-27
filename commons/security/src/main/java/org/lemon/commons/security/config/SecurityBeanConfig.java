@@ -1,6 +1,6 @@
 package org.lemon.commons.security.config;
 
-import org.lemon.commons.security.config.properties.LemonSecurityProperties;
+import org.lemon.commons.security.config.properties.SecurityProperties;
 import org.lemon.commons.security.filter.GlobalSpringSecurityExceptionFilter;
 import org.lemon.commons.security.handler.LoginFailHandler;
 import org.lemon.commons.security.handler.LoginSuccessHandler;
@@ -34,7 +34,7 @@ import java.util.Map;
 
 @AutoConfiguration
 @AutoConfigureOrder(-1)
-@EnableConfigurationProperties(LemonSecurityProperties.class)
+@EnableConfigurationProperties(SecurityProperties.class)
 public class SecurityBeanConfig {
 
     /**
@@ -53,7 +53,7 @@ public class SecurityBeanConfig {
      * Argon2 实现依赖 BouncyCastle(已通过传递依赖引入)。
      */
     @Bean
-    public PasswordEncoder passwordEncoder(LemonSecurityProperties properties) {
+    public PasswordEncoder passwordEncoder(SecurityProperties properties) {
         Map<String, PasswordEncoder> encoders = new HashMap<>();
         encoders.put("argon2", Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8());
         encoders.put("bcrypt", new BCryptPasswordEncoder());

@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.lemon.commons.redis.utils.RedisUtils;
-import org.lemon.commons.security.config.properties.LemonSecurityProperties;
+import org.lemon.commons.security.config.properties.SecurityProperties;
 import org.lemon.commons.security.data.LoginUserInfo;
 import org.lemon.commons.security.utils.AuthenticationUtil;
 import org.lemon.commons.security.utils.AuthorityHelper;
@@ -42,7 +42,7 @@ import static org.lemon.commons.core.constant.GlobalConstants.ACCESS_TOKEN;
 @RequiredArgsConstructor
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
-    private final LemonSecurityProperties securityProperties;
+    private final SecurityProperties securityProperties;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {

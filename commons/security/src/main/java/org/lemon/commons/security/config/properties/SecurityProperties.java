@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 @Data
 @Validated
 @ConfigurationProperties(prefix = "lemon.security")
-public class LemonSecurityProperties {
+public class SecurityProperties {
 
     /**
      * HTTP 请求时，访问令牌的请求 Header

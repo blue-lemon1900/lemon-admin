@@ -21,7 +21,7 @@ import org.lemon.commons.core.utils.StringUtils;
 import org.lemon.commons.idempotent.annotation.RepeatSubmit;
 import org.lemon.commons.json.utils.JsonUtils;
 import org.lemon.commons.redis.utils.RedisUtils;
-import org.lemon.commons.security.config.properties.LemonSecurityProperties;
+import org.lemon.commons.security.config.properties.SecurityProperties;
 import org.lemon.commons.security.utils.AuthenticationUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
@@ -43,7 +43,7 @@ public class RepeatSubmitAspect {
 
     private static final ThreadLocal<String> KEY_CACHE = new ThreadLocal<>();
 
-    private final LemonSecurityProperties properties;
+    private final SecurityProperties properties;
 
     @Before("@annotation(repeatSubmit)")
     public void doBefore(JoinPoint point, RepeatSubmit repeatSubmit) {

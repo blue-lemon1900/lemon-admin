@@ -5,7 +5,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.lemon.commons.security.annotation.AnonymousAccess;
-import org.lemon.commons.security.config.properties.LemonSecurityProperties;
+import org.lemon.commons.security.config.properties.SecurityProperties;
 import org.lemon.commons.security.utils.AnnotationUtil;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authorization.AuthorizationDecision;
@@ -41,7 +41,7 @@ import java.util.function.Supplier;
 public class AnonymousAccessAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
 
     private final RequestMappingHandlerMapping handlerMapping;
-    private final LemonSecurityProperties securityProperties;
+    private final SecurityProperties securityProperties;
 
     private RequestMatcher anonymousMatcher;
 

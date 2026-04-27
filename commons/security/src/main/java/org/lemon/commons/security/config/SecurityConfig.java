@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lemon.commons.core.config.properties.CaptchaProperties;
 import org.lemon.commons.security.authorization.AnonymousAccessAuthorizationManager;
-import org.lemon.commons.security.config.properties.LemonSecurityProperties;
+import org.lemon.commons.security.config.properties.SecurityProperties;
 import org.lemon.commons.security.filter.GlobalSpringSecurityExceptionFilter;
 import org.lemon.commons.security.filter.TokenAuthenticationFilter;
 import org.lemon.commons.security.login.captcha.CaptchaValidationFilter;
@@ -115,7 +115,7 @@ public class SecurityConfig {
     @Bean
     @Order(2)
     public SecurityFilterChain filterChain(HttpSecurity http,
-                                           LemonSecurityProperties lemonSecurityProperties,
+                                           SecurityProperties lemonSecurityProperties,
                                            AuthenticationEntryPoint authenticationEntryPoint,
                                            AccessDeniedHandler accessDeniedHandler,
                                            AnonymousAccessAuthorizationManager anonymousAccessAuthorizationManager) {
