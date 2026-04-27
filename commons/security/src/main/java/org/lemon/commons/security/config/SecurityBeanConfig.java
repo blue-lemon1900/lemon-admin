@@ -17,13 +17,20 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.task.TaskDecorator;
 import org.springframework.core.task.support.ContextPropagatingTaskDecorator;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @AutoConfiguration
 @AutoConfigureOrder(-1)
@@ -31,11 +38,31 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 public class SecurityBeanConfig {
 
     /**
-     * 密码加密使用的编码器
+     * 密码加密使用的编码器。
+     * <p>
+     * 采用 Spring Security 7 推荐的 {@link DelegatingPasswordEncoder}：
+     * <ul>
+     *   <li>新密码用 {@code lemon.security.password-encoder-id} 配置的算法编码（默认 argon2），
+     *       存储格式为 {@code {argon2}...}；切换 yml 配置即可迁移加密算法</li>
+     *   <li>历史 {@code {bcrypt}} / {@code {pbkdf2}} / {@code {scrypt}} 前缀仍可正确校验，
+     *       便于平滑迁移；登录时由 {@code UsernameAuthenticationProvider}
+     *       通过 {@link PasswordEncoder#upgradeEncoding(String)} 触发自动升级到当前 idForEncode。</li>
+     *   <li>{@code setDefaultPasswordEncoderForMatches}：兼容数据库中"无 {id} 前缀"的纯
+     *       {@code $2a$..} 老 bcrypt 串，避免直接抛 IllegalArgumentException。</li>
+     * </ul>
+     * Argon2 实现依赖 BouncyCastle(已通过传递依赖引入)。
      */
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    public PasswordEncoder passwordEncoder(LemonSecurityProperties properties) {
+        Map<String, PasswordEncoder> encoders = new HashMap<>();
+        encoders.put("argon2", Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8());
+        encoders.put("bcrypt", new BCryptPasswordEncoder());
+        encoders.put("pbkdf2", Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8());
+        encoders.put("scrypt", SCryptPasswordEncoder.defaultsForSpringSecurity_v5_8());
+
+        DelegatingPasswordEncoder delegating = new DelegatingPasswordEncoder(properties.getPasswordEncoderId(), encoders);
+        delegating.setDefaultPasswordEncoderForMatches(new BCryptPasswordEncoder());
+        return delegating;
     }
 
     /**

@@ -148,6 +148,9 @@ lemon:
     token-parameter: token
     permit-all-urls:
       - /favicon.ico    # 公共路径
+    # 新密码编码使用的算法 id;切换该值即可迁移加密算法,老前缀密码仍可校验并按需自动升级
+    # 取值: argon2 (默认,推荐) / bcrypt / pbkdf2 / scrypt
+    password-encoder-id: argon2
 
 # 多租户配置
 tenant:

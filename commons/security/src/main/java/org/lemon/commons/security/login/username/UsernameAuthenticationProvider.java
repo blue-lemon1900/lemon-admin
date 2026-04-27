@@ -46,6 +46,10 @@ public class UsernameAuthenticationProvider implements AuthenticationProvider {
                 throw new BadPasswordException("用户名或密码错误");
             }
 
+            // 密码 hash 升级：若库里 hash 不是当前 idForEncode，则用新算法重新编码并写回
+            // (例如老 {bcrypt} 串首次登录后悄默升级为 {argon2})。失败仅 warn 不阻断登录。
+            upgradePasswordIfNeeded(userInfo, auth.getPassword());
+
             // 存储用户信息到redis中
             usernameService.saveUserInfo(userInfo);
 
@@ -61,5 +65,27 @@ public class UsernameAuthenticationProvider implements AuthenticationProvider {
     @Override
     public boolean supports(@NonNull Class<?> authentication) {
         return UsernameAuthentication.class.isAssignableFrom(authentication);
+    }
+
+    /**
+     * 在校验通过后，按需把数据库密码升级到当前 idForEncode 算法。
+     * <p>
+     * 等价于 {@code DaoAuthenticationProvider} 在配合
+     * {@code UserDetailsPasswordService} 时的内置升级链路；本项目使用自研
+     * Provider，故在此手动触发。
+     */
+    private void upgradePasswordIfNeeded(LoginUserInfo userInfo, String rawPassword) {
+        try {
+            if (!passwordEncoder.upgradeEncoding(userInfo.getPassword())) {
+                return;
+            }
+            String newHash = passwordEncoder.encode(rawPassword);
+            usernameService.updatePassword(userInfo.getUserId(), newHash);
+            userInfo.setPassword(newHash);
+            log.info("用户 {} 的密码 hash 已自动升级到新算法", userInfo.getUsername());
+        } catch (Exception e) {
+            // 升级失败不能影响登录主流程
+            log.warn("用户 {} 密码 hash 升级失败,本次登录跳过升级: {}", userInfo.getUsername(), e.getMessage());
+        }
     }
 }

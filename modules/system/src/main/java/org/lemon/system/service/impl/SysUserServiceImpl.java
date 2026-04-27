@@ -28,6 +28,7 @@ import org.lemon.commons.core.utils.StringUtils;
 import org.lemon.commons.core.utils.spring.SpringUtils;
 import org.lemon.commons.mybatis.core.page.PageQuery;
 import org.lemon.commons.mybatis.core.page.TableDataInfo;
+import org.lemon.commons.mybatis.helper.DataPermissionHelper;
 import org.lemon.commons.redis.utils.RedisUtils;
 import org.lemon.commons.security.data.LoginUserInfo;
 import org.lemon.commons.security.data.model.RoleModel;
@@ -911,6 +912,23 @@ public class SysUserServiceImpl implements ISysUserService, UserService, Usernam
         // 生成新令牌并更新 Redis
         generateAccessToken(loginUserInfo);
         return loginUserInfo;
+    }
+
+    /**
+     * 更新用户密码 hash（用于登录时的密码算法平滑升级）。
+     * <p>
+     * 用 {@link DataPermissionHelper#ignore} 包裹的原因：登录链路尚未完成认证，
+     * SecurityContext 中没有当前用户，{@code @DataPermission} 拦截器会因 currentUser
+     * 为 null 而生成异常 SQL；此处仅按主键更新自己的密码字段，应跳过数据权限。
+     */
+    @Override
+    public void updatePassword(Long userId, String newPasswordHash) {
+        DataPermissionHelper.ignore(() -> {
+            SysUser update = new SysUser();
+            update.setUserId(userId);
+            update.setPassword(newPasswordHash);
+            baseMapper.updateById(update);
+        });
     }
 
     /**
