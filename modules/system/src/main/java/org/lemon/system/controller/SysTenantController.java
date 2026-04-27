@@ -5,10 +5,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.lemon.commons.core.domain.result.R;
-import org.lemon.commons.validation.group.AddGroup;
-import org.lemon.commons.validation.group.EditGroup;
 import org.lemon.commons.encrypt.annotation.ApiEncrypt;
 import org.lemon.commons.excel.utils.ExcelUtil;
 import org.lemon.commons.idempotent.annotation.RepeatSubmit;
@@ -16,7 +15,10 @@ import org.lemon.commons.log.annotation.Log;
 import org.lemon.commons.log.enums.BusinessType;
 import org.lemon.commons.mybatis.core.page.PageQuery;
 import org.lemon.commons.mybatis.core.page.TableDataInfo;
+import org.lemon.commons.security.annotation.RequireSuperAdminAndPerm;
 import org.lemon.commons.tenant.helper.TenantHelper;
+import org.lemon.commons.validation.group.AddGroup;
+import org.lemon.commons.validation.group.EditGroup;
 import org.lemon.commons.web.core.BaseController;
 import org.lemon.system.domain.bo.SysTenantBo;
 import org.lemon.system.domain.vo.SysTenantVo;
@@ -25,8 +27,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * 租户管理
@@ -45,7 +45,7 @@ public class SysTenantController extends BaseController {
     /**
      * 查询租户列表
      */
-    @PreAuthorize("@ss.hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY) and @ss.hasPermission('system:tenant:list')")
+    @RequireSuperAdminAndPerm("system:tenant:list")
     @GetMapping("/list")
     public TableDataInfo<SysTenantVo> list(SysTenantBo bo, PageQuery pageQuery) {
         return tenantService.queryPageList(bo, pageQuery);
@@ -54,7 +54,7 @@ public class SysTenantController extends BaseController {
     /**
      * 导出租户列表
      */
-    @PreAuthorize("@ss.hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY) and @ss.hasPermission('system:tenant:export')")
+    @RequireSuperAdminAndPerm("system:tenant:export")
     @Log(title = "租户管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(SysTenantBo bo, HttpServletResponse response) {
@@ -67,7 +67,7 @@ public class SysTenantController extends BaseController {
      *
      * @param id 主键
      */
-    @PreAuthorize("@ss.hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY) and @ss.hasPermission('system:tenant:query')")
+    @RequireSuperAdminAndPerm("system:tenant:query")
     @GetMapping("/{id}")
     public R<SysTenantVo> getInfo(@NotNull(message = "主键不能为空")
                                   @PathVariable Long id) {
@@ -78,7 +78,7 @@ public class SysTenantController extends BaseController {
      * 新增租户
      */
     @ApiEncrypt
-    @PreAuthorize("@ss.hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY) and @ss.hasPermission('system:tenant:add')")
+    @RequireSuperAdminAndPerm("system:tenant:add")
     @Log(title = "租户管理", businessType = BusinessType.INSERT)
     @Lock4j
     @RepeatSubmit()
@@ -93,7 +93,7 @@ public class SysTenantController extends BaseController {
     /**
      * 修改租户
      */
-    @PreAuthorize("@ss.hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY) and @ss.hasPermission('system:tenant:edit')")
+    @RequireSuperAdminAndPerm("system:tenant:edit")
     @Log(title = "租户管理", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -108,7 +108,7 @@ public class SysTenantController extends BaseController {
     /**
      * 状态修改
      */
-    @PreAuthorize("@ss.hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY) and @ss.hasPermission('system:tenant:edit')")
+    @RequireSuperAdminAndPerm("system:tenant:edit")
     @Log(title = "租户管理", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping("/changeStatus")
@@ -122,7 +122,7 @@ public class SysTenantController extends BaseController {
      *
      * @param ids 主键串
      */
-    @PreAuthorize("@ss.hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY) and @ss.hasPermission('system:tenant:remove')")
+    @RequireSuperAdminAndPerm("system:tenant:remove")
     @Log(title = "租户管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
@@ -135,7 +135,7 @@ public class SysTenantController extends BaseController {
      *
      * @param tenantId 租户ID
      */
-    @PreAuthorize("@ss.hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY)")
+    @PreAuthorize("hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY)")
     @GetMapping("/dynamic/{tenantId}")
     public R<Void> dynamicTenant(@NotBlank(message = "租户ID不能为空") @PathVariable String tenantId) {
         TenantHelper.setDynamic(tenantId, true);
@@ -145,7 +145,7 @@ public class SysTenantController extends BaseController {
     /**
      * 清除动态租户
      */
-    @PreAuthorize("@ss.hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY)")
+    @PreAuthorize("hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY)")
     @GetMapping("/dynamic/clear")
     public R<Void> dynamicClear() {
         TenantHelper.clearDynamic();
@@ -159,7 +159,7 @@ public class SysTenantController extends BaseController {
      * @param tenantId  租户id
      * @param packageId 套餐id
      */
-    @PreAuthorize("@ss.hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY) and @ss.hasPermission('system:tenant:edit')")
+    @RequireSuperAdminAndPerm("system:tenant:edit")
     @Log(title = "租户管理", businessType = BusinessType.UPDATE)
     @Lock4j
     @GetMapping("/syncTenantPackage")
@@ -171,7 +171,7 @@ public class SysTenantController extends BaseController {
     /**
      * 同步租户字典
      */
-    @PreAuthorize("@ss.hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY)")
+    @PreAuthorize("hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY)")
     @Log(title = "租户管理", businessType = BusinessType.INSERT)
     @Lock4j
     @GetMapping("/syncTenantDict")
@@ -186,7 +186,7 @@ public class SysTenantController extends BaseController {
     /**
      * 同步租户参数配置
      */
-    @PreAuthorize("@ss.hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY)")
+    @PreAuthorize("hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY)")
     @Log(title = "租户管理", businessType = BusinessType.INSERT)
     @Lock4j
     @GetMapping("/syncTenantConfig")

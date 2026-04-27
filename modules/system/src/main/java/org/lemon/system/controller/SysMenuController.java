@@ -1,6 +1,8 @@
 package org.lemon.system.controller;
 
 import cn.hutool.core.lang.tree.Tree;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.lemon.commons.core.constant.SystemConstants;
 import org.lemon.commons.core.domain.result.R;
@@ -8,6 +10,8 @@ import org.lemon.commons.core.utils.StringUtils;
 import org.lemon.commons.idempotent.annotation.RepeatSubmit;
 import org.lemon.commons.log.annotation.Log;
 import org.lemon.commons.log.enums.BusinessType;
+import org.lemon.commons.security.annotation.RequireSuperAdminAndPerm;
+import org.lemon.commons.security.annotation.RequireTenantAdminAndPerm;
 import org.lemon.commons.security.utils.SecurityUtil;
 import org.lemon.commons.web.core.BaseController;
 import org.lemon.system.domain.bo.SysMenuBo;
@@ -18,9 +22,6 @@ import org.lemon.system.service.ISysMenuService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 菜单信息
@@ -50,7 +51,7 @@ public class SysMenuController extends BaseController {
     /**
      * 获取菜单列表
      */
-    @PreAuthorize("@ss.hasAnyRoles(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY,T(org.lemon.commons.core.constant.TenantConstants).TENANT_ADMIN_ROLE_KEY) and @ss.hasPermission('system:menu:list')")
+    @RequireTenantAdminAndPerm("system:menu:list")
     @GetMapping("/list")
     public R<List<SysMenuVo>> list(SysMenuBo menu) {
         List<SysMenuVo> menus = menuService.selectMenuList(menu, SecurityUtil.getLoginUserId());
@@ -63,7 +64,7 @@ public class SysMenuController extends BaseController {
      *
      * @param menuId 菜单ID
      */
-    @PreAuthorize("@ss.hasAnyRoles(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY,T(org.lemon.commons.core.constant.TenantConstants).TENANT_ADMIN_ROLE_KEY) and @ss.hasPermission('system:menu:query')")
+    @RequireTenantAdminAndPerm("system:menu:query")
     @GetMapping(value = "/{menuId}")
     public R<SysMenuVo> getInfo(@PathVariable Long menuId) {
         return R.success(menuService.selectMenuById(menuId));
@@ -72,7 +73,7 @@ public class SysMenuController extends BaseController {
     /**
      * 获取菜单下拉树列表
      */
-    @PreAuthorize("@ss.hasPermission('system:menu:query')")
+    @PreAuthorize("hasAuthority('system:menu:query')")
     @GetMapping("/treeselect")
     public R<List<Tree<Long>>> treeselect(SysMenuBo menu) {
         List<SysMenuVo> menus = menuService.selectMenuList(menu, SecurityUtil.getLoginUserId());
@@ -84,7 +85,7 @@ public class SysMenuController extends BaseController {
      *
      * @param roleId 角色ID
      */
-    @PreAuthorize("@ss.hasPermission('system:menu:query')")
+    @PreAuthorize("hasAuthority('system:menu:query')")
     @GetMapping(value = "/roleMenuTreeselect/{roleId}")
     public R<MenuTreeSelectVo> roleMenuTreeselect(@PathVariable("roleId") Long roleId) {
         List<SysMenuVo> menus = menuService.selectMenuList(SecurityUtil.getLoginUserId());
@@ -99,7 +100,7 @@ public class SysMenuController extends BaseController {
      *
      * @param packageId 租户套餐ID
      */
-    @PreAuthorize("@ss.hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY) and @ss.hasPermission('system:menu:query')")
+    @RequireSuperAdminAndPerm("system:menu:query")
     @GetMapping(value = "/tenantPackageMenuTreeselect/{packageId}")
     public R<MenuTreeSelectVo> tenantPackageMenuTreeselect(@PathVariable("packageId") Long packageId) {
         List<SysMenuVo> menus = menuService.selectMenuList(SecurityUtil.getLoginUserId());
@@ -117,7 +118,7 @@ public class SysMenuController extends BaseController {
     /**
      * 新增菜单
      */
-    @PreAuthorize("@ss.hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY) and @ss.hasPermission('system:menu:add')")
+    @RequireSuperAdminAndPerm("system:menu:add")
     @Log(title = "菜单管理", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping
@@ -135,7 +136,7 @@ public class SysMenuController extends BaseController {
     /**
      * 修改菜单
      */
-    @PreAuthorize("@ss.hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY) and @ss.hasPermission('system:menu:edit')")
+    @RequireSuperAdminAndPerm("system:menu:edit")
     @Log(title = "菜单管理", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping
@@ -157,7 +158,7 @@ public class SysMenuController extends BaseController {
      *
      * @param menuId 菜单ID
      */
-    @PreAuthorize("@ss.hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY) and @ss.hasPermission('system:menu:remove')")
+    @RequireSuperAdminAndPerm("system:menu:remove")
     @Log(title = "菜单管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{menuId}")
     public R<Void> remove(@PathVariable("menuId") Long menuId) {
@@ -184,7 +185,7 @@ public class SysMenuController extends BaseController {
      *
      * @param menuIds 菜单ID串
      */
-    @PreAuthorize("@ss.hasRole(T(org.lemon.commons.core.constant.TenantConstants).SUPER_ADMIN_ROLE_KEY) and @ss.hasPermission('system:menu:remove')")
+    @RequireSuperAdminAndPerm("system:menu:remove")
     @Log(title = "菜单管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/cascade/{menuIds}")
     public R<Void> remove(@PathVariable("menuIds") Long[] menuIds) {

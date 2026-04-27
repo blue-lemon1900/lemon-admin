@@ -43,7 +43,7 @@ public class SysPostController extends BaseController {
     /**
      * 获取岗位列表
      */
-    @PreAuthorize("@ss.hasPermission('system:post:list')")
+    @PreAuthorize("hasAuthority('system:post:list')")
     @GetMapping("/list")
     public TableDataInfo<SysPostVo> list(SysPostBo post, PageQuery pageQuery) {
         return postService.selectPagePostList(post, pageQuery);
@@ -53,7 +53,7 @@ public class SysPostController extends BaseController {
      * 导出岗位列表
      */
     @Log(title = "岗位管理", businessType = BusinessType.EXPORT)
-    @PreAuthorize("@ss.hasPermission('system:post:export')")
+    @PreAuthorize("hasAuthority('system:post:export')")
     @PostMapping("/export")
     public void export(SysPostBo post, HttpServletResponse response) {
         List<SysPostVo> list = postService.selectPostList(post);
@@ -65,7 +65,7 @@ public class SysPostController extends BaseController {
      *
      * @param postId 岗位ID
      */
-    @PreAuthorize("@ss.hasPermission('system:post:query')")
+    @PreAuthorize("hasAuthority('system:post:query')")
     @GetMapping(value = "/{postId}")
     public R<SysPostVo> getInfo(@PathVariable Long postId) {
         return R.success(postService.selectPostById(postId));
@@ -74,7 +74,7 @@ public class SysPostController extends BaseController {
     /**
      * 新增岗位
      */
-    @PreAuthorize("@ss.hasPermission('system:post:add')")
+    @PreAuthorize("hasAuthority('system:post:add')")
     @Log(title = "岗位管理", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping
@@ -90,7 +90,7 @@ public class SysPostController extends BaseController {
     /**
      * 修改岗位
      */
-    @PreAuthorize("@ss.hasPermission('system:post:edit')")
+    @PreAuthorize("hasAuthority('system:post:edit')")
     @Log(title = "岗位管理", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping
@@ -111,7 +111,7 @@ public class SysPostController extends BaseController {
      *
      * @param postIds 岗位ID串
      */
-    @PreAuthorize("@ss.hasPermission('system:post:remove')")
+    @PreAuthorize("hasAuthority('system:post:remove')")
     @Log(title = "岗位管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{postIds}")
     public R<Void> remove(@PathVariable Long[] postIds) {
@@ -124,7 +124,7 @@ public class SysPostController extends BaseController {
      * @param postIds 岗位ID串
      * @param deptId  部门id
      */
-    @PreAuthorize("@ss.hasPermission('system:post:query')")
+    @PreAuthorize("hasAuthority('system:post:query')")
     @GetMapping("/optionselect")
     public R<List<SysPostVo>> optionselect(@RequestParam(required = false) Long[] postIds, @RequestParam(required = false) Long deptId) {
         List<SysPostVo> list = new ArrayList<>();
@@ -141,7 +141,7 @@ public class SysPostController extends BaseController {
     /**
      * 获取部门树列表
      */
-    @PreAuthorize("@ss.hasPermission('system:post:list')")
+    @PreAuthorize("hasAuthority('system:post:list')")
     @GetMapping("/deptTree")
     public R<List<Tree<Long>>> deptTree(SysDeptBo dept) {
         return R.success(deptService.selectDeptTreeList(dept));

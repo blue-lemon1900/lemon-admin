@@ -3,9 +3,12 @@ package org.lemon.commons.security.login.username;
 import lombok.Getter;
 import lombok.Setter;
 import org.lemon.commons.security.data.LoginUserInfo;
+import org.lemon.commons.security.utils.SecurityUtil;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 
+import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -63,6 +66,18 @@ public class UsernameAuthentication extends AbstractAuthenticationToken {
     public Object getPrincipal() {
         // 根据 SpringSecurity 的设计，授权成功之前，返回的客户端传过来的数据。授权成功后，返回当前登陆用户的信息
         return isAuthenticated() ? currentUser : username;
+    }
+
+    /**
+     * 认证成功后，从 currentUser 即时计算 authorities，使 hasAuthority/hasRole 等内置 SpEL 生效。
+     * 父类 authorities 字段为 final，无法在认证后回填，故此处覆写按需返回。
+     */
+    @Override
+    public Collection<GrantedAuthority> getAuthorities() {
+        if (isAuthenticated() && currentUser != null) {
+            return SecurityUtil.buildAuthorities(currentUser);
+        }
+        return super.getAuthorities();
     }
 
     /**

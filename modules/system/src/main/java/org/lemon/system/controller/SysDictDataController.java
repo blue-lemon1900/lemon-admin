@@ -40,7 +40,7 @@ public class SysDictDataController extends BaseController {
     /**
      * 查询字典数据列表
      */
-    @PreAuthorize("@ss.hasPermission('system:dict:list')")
+    @PreAuthorize("hasAuthority('system:dict:list')")
     @GetMapping("/list")
     public TableDataInfo<SysDictDataVo> list(SysDictDataBo dictData, PageQuery pageQuery) {
         return dictDataService.selectPageDictDataList(dictData, pageQuery);
@@ -50,7 +50,7 @@ public class SysDictDataController extends BaseController {
      * 导出字典数据列表
      */
     @Log(title = "字典数据", businessType = BusinessType.EXPORT)
-    @PreAuthorize("@ss.hasPermission('system:dict:export')")
+    @PreAuthorize("hasAuthority('system:dict:export')")
     @PostMapping("/export")
     public void export(SysDictDataBo dictData, HttpServletResponse response) {
         List<SysDictDataVo> list = dictDataService.selectDictDataList(dictData);
@@ -62,7 +62,7 @@ public class SysDictDataController extends BaseController {
      *
      * @param dictCode 字典code
      */
-    @PreAuthorize("@ss.hasPermission('system:dict:query')")
+    @PreAuthorize("hasAuthority('system:dict:query')")
     @GetMapping(value = "/{dictCode}")
     public R<SysDictDataVo> getInfo(@PathVariable Long dictCode) {
         return R.success(dictDataService.selectDictDataById(dictCode));
@@ -85,7 +85,7 @@ public class SysDictDataController extends BaseController {
     /**
      * 新增字典数据
      */
-    @PreAuthorize("@ss.hasPermission('system:dict:add')")
+    @PreAuthorize("hasAuthority('system:dict:add')")
     @Log(title = "字典数据", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping
@@ -100,7 +100,7 @@ public class SysDictDataController extends BaseController {
     /**
      * 修改保存字典数据
      */
-    @PreAuthorize("@ss.hasPermission('system:dict:edit')")
+    @PreAuthorize("hasAuthority('system:dict:edit')")
     @Log(title = "字典数据", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping
@@ -117,7 +117,7 @@ public class SysDictDataController extends BaseController {
      *
      * @param dictCodes 字典code串
      */
-    @PreAuthorize("@ss.hasPermission('system:dict:remove')")
+    @PreAuthorize("hasAuthority('system:dict:remove')")
     @Log(title = "字典数据", businessType = BusinessType.DELETE)
     @DeleteMapping("/{dictCodes}")
     public R<Void> remove(@PathVariable Long[] dictCodes) {

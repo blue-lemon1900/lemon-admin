@@ -34,7 +34,7 @@ public class SysNoticeController extends BaseController {
     /**
      * 获取通知公告列表
      */
-    @PreAuthorize("@ss.hasPermission('system:notice:list')")
+    @PreAuthorize("hasAuthority('system:notice:list')")
     @GetMapping("/list")
     public TableDataInfo<SysNoticeVo> list(SysNoticeBo notice, PageQuery pageQuery) {
         return noticeService.selectPageNoticeList(notice, pageQuery);
@@ -45,7 +45,7 @@ public class SysNoticeController extends BaseController {
      *
      * @param noticeId 公告ID
      */
-    @PreAuthorize("@ss.hasPermission('system:notice:query')")
+    @PreAuthorize("hasAuthority('system:notice:query')")
     @GetMapping(value = "/{noticeId}")
     public R<SysNoticeVo> getInfo(@PathVariable Long noticeId) {
         return R.success(noticeService.selectNoticeById(noticeId));
@@ -54,7 +54,7 @@ public class SysNoticeController extends BaseController {
     /**
      * 新增通知公告
      */
-    @PreAuthorize("@ss.hasPermission('system:notice:add')")
+    @PreAuthorize("hasAuthority('system:notice:add')")
     @Log(title = "通知公告", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping
@@ -71,7 +71,7 @@ public class SysNoticeController extends BaseController {
     /**
      * 修改通知公告
      */
-    @PreAuthorize("@ss.hasPermission('system:notice:edit')")
+    @PreAuthorize("hasAuthority('system:notice:edit')")
     @Log(title = "通知公告", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping
@@ -84,7 +84,7 @@ public class SysNoticeController extends BaseController {
      *
      * @param noticeIds 公告ID串
      */
-    @PreAuthorize("@ss.hasPermission('system:notice:remove')")
+    @PreAuthorize("hasAuthority('system:notice:remove')")
     @Log(title = "通知公告", businessType = BusinessType.DELETE)
     @DeleteMapping("/{noticeIds}")
     public R<Void> remove(@PathVariable Long[] noticeIds) {

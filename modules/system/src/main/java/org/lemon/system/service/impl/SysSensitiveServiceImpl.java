@@ -1,8 +1,6 @@
 package org.lemon.system.service.impl;
 
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ArrayUtils;
-import org.lemon.commons.security.service.SecurityFrameworkService;
 import org.lemon.commons.security.utils.SecurityUtil;
 import org.lemon.commons.sensitive.core.SensitiveService;
 import org.springframework.stereotype.Service;
@@ -16,10 +14,7 @@ import org.springframework.stereotype.Service;
  * @version 3.6.0
  */
 @Service
-@RequiredArgsConstructor
 public class SysSensitiveServiceImpl implements SensitiveService {
-
-    private final SecurityFrameworkService ss;
 
     /**
      * 是否脱敏
@@ -33,11 +28,11 @@ public class SysSensitiveServiceImpl implements SensitiveService {
         boolean roleExist = ArrayUtils.isNotEmpty(roleKey);
         boolean permsExist = ArrayUtils.isNotEmpty(perms);
 
-        if (roleExist && permsExist && ss.hasAnyRoles(roleKey) && ss.hasAnyPermissions(perms)) {
+        if (roleExist && permsExist && SecurityUtil.hasAnyRole(roleKey) && SecurityUtil.hasAnyAuthority(perms)) {
             return false;
-        } else if (roleExist && ss.hasAnyRoles(roleKey)) {
+        } else if (roleExist && SecurityUtil.hasAnyRole(roleKey)) {
             return false;
-        } else if (permsExist && ss.hasAnyPermissions(perms)) {
+        } else if (permsExist && SecurityUtil.hasAnyAuthority(perms)) {
             return false;
         }
 

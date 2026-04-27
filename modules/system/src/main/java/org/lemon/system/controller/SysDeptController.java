@@ -37,7 +37,7 @@ public class SysDeptController extends BaseController {
     /**
      * 获取部门列表
      */
-    @PreAuthorize("@ss.hasPermission('system:dept:list')")
+    @PreAuthorize("hasAuthority('system:dept:list')")
     @GetMapping("/list")
     public R<List<SysDeptVo>> list(SysDeptBo dept) {
         List<SysDeptVo> depts = deptService.selectDeptList(dept);
@@ -49,7 +49,7 @@ public class SysDeptController extends BaseController {
      *
      * @param deptId 部门ID
      */
-    @PreAuthorize("@ss.hasPermission('system:dept:list')")
+    @PreAuthorize("hasAuthority('system:dept:list')")
     @GetMapping("/list/exclude/{deptId}")
     public R<List<SysDeptVo>> excludeChild(@PathVariable(value = "deptId", required = false) Long deptId) {
         List<SysDeptVo> depts = deptService.selectDeptList(new SysDeptBo());
@@ -63,7 +63,7 @@ public class SysDeptController extends BaseController {
      *
      * @param deptId 部门ID
      */
-    @PreAuthorize("@ss.hasPermission('system:dept:query')")
+    @PreAuthorize("hasAuthority('system:dept:query')")
     @GetMapping(value = "/{deptId}")
     public R<SysDeptVo> getInfo(@PathVariable Long deptId) {
         deptService.checkDeptDataScope(deptId);
@@ -73,7 +73,7 @@ public class SysDeptController extends BaseController {
     /**
      * 新增部门
      */
-    @PreAuthorize("@ss.hasPermission('system:dept:add')")
+    @PreAuthorize("hasAuthority('system:dept:add')")
     @Log(title = "部门管理", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping
@@ -87,7 +87,7 @@ public class SysDeptController extends BaseController {
     /**
      * 修改部门
      */
-    @PreAuthorize("@ss.hasPermission('system:dept:edit')")
+    @PreAuthorize("hasAuthority('system:dept:edit')")
     @Log(title = "部门管理", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping
@@ -113,7 +113,7 @@ public class SysDeptController extends BaseController {
      *
      * @param deptId 部门ID
      */
-    @PreAuthorize("@ss.hasPermission('system:dept:remove')")
+    @PreAuthorize("hasAuthority('system:dept:remove')")
     @Log(title = "部门管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{deptId}")
     public R<Void> remove(@PathVariable Long deptId) {
@@ -138,7 +138,7 @@ public class SysDeptController extends BaseController {
      *
      * @param deptIds 部门ID串
      */
-    @PreAuthorize("@ss.hasPermission('system:dept:query')")
+    @PreAuthorize("hasAuthority('system:dept:query')")
     @GetMapping("/optionselect")
     public R<List<SysDeptVo>> optionselect(@RequestParam(required = false) Long[] deptIds) {
         return R.success(deptService.selectDeptByIds(deptIds == null ? null : List.of(deptIds)));

@@ -12,13 +12,13 @@ import org.lemon.commons.redis.utils.RedisUtils;
 import org.lemon.commons.security.config.properties.LemonSecurityProperties;
 import org.lemon.commons.security.data.LoginUserInfo;
 import org.lemon.commons.security.utils.AuthenticationUtil;
+import org.lemon.commons.security.utils.SecurityUtil;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
 
 import static org.lemon.commons.core.constant.GlobalConstants.ACCESS_TOKEN;
 
@@ -65,7 +65,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
      * @param request       请求
      */
     private void setLoginUser(LoginUserInfo loginUserInfo, HttpServletRequest request) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUserInfo, null, Collections.emptyList());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                loginUserInfo, null, SecurityUtil.buildAuthorities(loginUserInfo));
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }

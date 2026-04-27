@@ -41,7 +41,7 @@ public class SysOssController extends BaseController {
     /**
      * 查询OSS对象存储列表
      */
-    @PreAuthorize("@ss.hasPermission('system:oss:list')")
+    @PreAuthorize("hasAuthority('system:oss:list')")
     @GetMapping("/list")
     public TableDataInfo<SysOssVo> list(@Validated(QueryGroup.class) SysOssBo bo, PageQuery pageQuery) {
         return ossService.queryPageList(bo, pageQuery);
@@ -52,7 +52,7 @@ public class SysOssController extends BaseController {
      *
      * @param ossIds OSS对象ID串
      */
-    @PreAuthorize("@ss.hasPermission('system:oss:query')")
+    @PreAuthorize("hasAuthority('system:oss:query')")
     @GetMapping("/listByIds/{ossIds}")
     public R<List<SysOssVo>> listByIds(@NotEmpty(message = "主键不能为空")
                                        @PathVariable Long[] ossIds) {
@@ -65,7 +65,7 @@ public class SysOssController extends BaseController {
      *
      * @param file 文件
      */
-    @PreAuthorize("@ss.hasPermission('system:oss:upload')")
+    @PreAuthorize("hasAuthority('system:oss:upload')")
     @Log(title = "OSS对象存储", businessType = BusinessType.INSERT)
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public R<SysOssUploadVo> upload(@RequestPart("file") MultipartFile file) {
@@ -82,7 +82,7 @@ public class SysOssController extends BaseController {
      *
      * @param ossId OSS对象ID
      */
-    @PreAuthorize("@ss.hasPermission('system:oss:download')")
+    @PreAuthorize("hasAuthority('system:oss:download')")
     @GetMapping("/download/{ossId}")
     public void download(@PathVariable Long ossId, HttpServletResponse response) throws IOException {
         ossService.download(ossId, response);
@@ -93,7 +93,7 @@ public class SysOssController extends BaseController {
      *
      * @param ossIds OSS对象ID串
      */
-    @PreAuthorize("@ss.hasPermission('system:oss:remove')")
+    @PreAuthorize("hasAuthority('system:oss:remove')")
     @Log(title = "OSS对象存储", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ossIds}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

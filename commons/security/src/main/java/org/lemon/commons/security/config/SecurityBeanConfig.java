@@ -7,9 +7,7 @@ import org.lemon.commons.security.handler.LoginSuccessHandler;
 import org.lemon.commons.security.handler.exception.AccessDeniedHandlerImpl;
 import org.lemon.commons.security.handler.exception.AuthenticationEntryPointImpl;
 import org.lemon.commons.security.login.username.UsernameAuthenticationProvider;
-import org.lemon.commons.security.service.SecurityFrameworkService;
 import org.lemon.commons.security.service.UsernameService;
-import org.lemon.commons.security.service.impl.SecurityFrameworkServiceImpl;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -93,14 +91,6 @@ public class SecurityBeanConfig {
                                                                          PasswordEncoder passwordEncoder,
                                                                          @Value("${tenant.enable:false}") boolean tenantEnable) {
         return new UsernameAuthenticationProvider(usernameService, passwordEncoder, tenantEnable);
-    }
-
-    /**
-     * Security 工具服务，提供获取当前登录用户、权限判断等常用方法，Bean 名称 "ss" 方便在 SpEL 中引用
-     */
-    @Bean("ss")
-    public SecurityFrameworkService securityFrameworkService() {
-        return new SecurityFrameworkServiceImpl();
     }
 
     /**
