@@ -9,7 +9,7 @@ import org.lemon.commons.core.exceptions.ServiceException;
 import org.lemon.commons.core.utils.ObjectUtils;
 import org.lemon.commons.mybatis.core.domain.BaseEntity;
 import org.lemon.commons.security.data.LoginUserInfo;
-import org.lemon.commons.security.utils.SecurityUtil;
+import org.lemon.commons.security.utils.SecurityContextHelper;
 
 import java.util.Date;
 
@@ -81,7 +81,7 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
                 baseEntity.setUpdateTime(current);
 
                 // 获取当前登录用户的ID，并填充更新人信息
-                Long userId = SecurityUtil.getLoginUserId();
+                Long userId = SecurityContextHelper.getLoginUserId();
                 if (ObjectUtil.isNotNull(userId)) {
                     baseEntity.setUpdateBy(userId);
                 } else {
@@ -103,7 +103,7 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
     private LoginUserInfo getLoginUser() {
         LoginUserInfo loginUser;
         try {
-            loginUser = SecurityUtil.getLoginUser();
+            loginUser = SecurityContextHelper.getLoginUser();
         } catch (Exception e) {
             return null;
         }

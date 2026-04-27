@@ -2,7 +2,7 @@ package org.lemon.system.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.lemon.commons.core.domain.result.R;
-import org.lemon.commons.security.utils.SecurityUtil;
+import org.lemon.commons.security.utils.SecurityContextHelper;
 import org.lemon.commons.web.core.BaseController;
 import org.lemon.system.domain.vo.SysSocialVo;
 import org.lemon.system.service.ISysSocialService;
@@ -32,7 +32,7 @@ public class SysSocialController extends BaseController {
      */
     @GetMapping("/list")
     public R<List<SysSocialVo>> list() {
-        return R.success(socialUserService.queryListByUserId(SecurityUtil.getLoginUserId()));
+        return R.success(socialUserService.queryListByUserId(SecurityContextHelper.getLoginUserId()));
     }
 
 }

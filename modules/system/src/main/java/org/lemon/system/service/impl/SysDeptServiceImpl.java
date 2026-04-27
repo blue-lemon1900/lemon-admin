@@ -22,7 +22,7 @@ import org.lemon.commons.mybatis.core.page.PageQuery;
 import org.lemon.commons.mybatis.core.page.TableDataInfo;
 import org.lemon.commons.mybatis.helper.DataBaseHelper;
 import org.lemon.commons.redis.utils.CacheUtils;
-import org.lemon.commons.security.utils.SecurityUtil;
+import org.lemon.commons.security.utils.AdminHelper;
 import org.lemon.system.domain.bo.SysDeptBo;
 import org.lemon.system.domain.entity.SysDept;
 import org.lemon.system.domain.entity.SysRole;
@@ -286,7 +286,7 @@ public class SysDeptServiceImpl implements ISysDeptService, DeptService {
         if (ObjectUtil.isNull(deptId)) {
             return;
         }
-        if (SecurityUtil.isSuperAdmin()) {
+        if (AdminHelper.isSuperAdmin()) {
             return;
         }
         if (baseMapper.countDeptById(deptId) == 0) {

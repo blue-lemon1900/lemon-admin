@@ -13,7 +13,7 @@ import org.lemon.commons.core.utils.StringUtils;
 import org.lemon.commons.core.utils.reflect.ReflectUtils;
 import org.lemon.commons.core.utils.spring.SpringUtils;
 import org.lemon.commons.redis.utils.RedisUtils;
-import org.lemon.commons.security.utils.SecurityUtil;
+import org.lemon.commons.security.utils.SecurityContextHelper;
 
 import java.util.Stack;
 import java.util.function.Supplier;
@@ -119,11 +119,11 @@ public class TenantHelper {
         if (!isEnable()) {
             return;
         }
-        if (!SecurityUtil.isLogin() || !global) {
+        if (!SecurityContextHelper.isLogin() || !global) {
             TEMP_DYNAMIC_TENANT.set(tenantId);
             return;
         }
-        String cacheKey = DYNAMIC_TENANT_KEY + ":" + SecurityUtil.getLoginUserId();
+        String cacheKey = DYNAMIC_TENANT_KEY + ":" + SecurityContextHelper.getLoginUserId();
         RedisUtils.setCacheObject(cacheKey, tenantId);
     }
 
@@ -136,7 +136,7 @@ public class TenantHelper {
         if (!isEnable()) {
             return null;
         }
-        if (!SecurityUtil.isLogin()) {
+        if (!SecurityContextHelper.isLogin()) {
             return TEMP_DYNAMIC_TENANT.get();
         }
 
@@ -145,7 +145,7 @@ public class TenantHelper {
         if (StringUtils.isNotBlank(tenantId)) {
             return tenantId;
         }
-        String cacheKey = DYNAMIC_TENANT_KEY + ":" + SecurityUtil.getLoginUserId();
+        String cacheKey = DYNAMIC_TENANT_KEY + ":" + SecurityContextHelper.getLoginUserId();
         tenantId = RedisUtils.getCacheObject(cacheKey);
 
         // 如果为 -1 说明已经查过redis并且不存在值 则直接返回null
@@ -163,12 +163,12 @@ public class TenantHelper {
         if (!isEnable()) {
             return;
         }
-        if (!SecurityUtil.isLogin()) {
+        if (!SecurityContextHelper.isLogin()) {
             TEMP_DYNAMIC_TENANT.remove();
             return;
         }
         TEMP_DYNAMIC_TENANT.remove();
-        String cacheKey = DYNAMIC_TENANT_KEY + ":" + SecurityUtil.getLoginUserId();
+        String cacheKey = DYNAMIC_TENANT_KEY + ":" + SecurityContextHelper.getLoginUserId();
         RedisUtils.deleteObject(cacheKey);
     }
 
@@ -204,7 +204,7 @@ public class TenantHelper {
      * 获取当前租户id(动态租户优先)
      */
     public static String getTenantId() {
-        return SecurityUtil.getTenantId();
+        return SecurityContextHelper.getTenantId();
     }
 
     private static IgnoreStrategy getIgnoreStrategy() {

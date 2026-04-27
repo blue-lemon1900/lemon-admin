@@ -3,7 +3,7 @@ package org.lemon.system.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.lemon.commons.core.constant.TenantConstants;
 import org.lemon.commons.systemapi.service.PermissionService;
-import org.lemon.commons.security.utils.SecurityUtil;
+import org.lemon.commons.security.utils.AdminHelper;
 import org.lemon.system.service.ISysMenuService;
 import org.lemon.system.service.ISysPermissionService;
 import org.lemon.system.service.ISysRoleService;
@@ -34,7 +34,7 @@ public class SysPermissionServiceImpl implements ISysPermissionService, Permissi
     public Set<String> getRolePermission(Long userId) {
         Set<String> roles = new HashSet<>();
         // 管理员拥有所有权限
-        if (SecurityUtil.isSuperAdmin(userId)) {
+        if (AdminHelper.isSuperAdmin(userId)) {
             roles.add(TenantConstants.SUPER_ADMIN_ROLE_KEY);
         } else {
             roles.addAll(roleService.selectRolePermissionByUserId(userId));
@@ -52,7 +52,7 @@ public class SysPermissionServiceImpl implements ISysPermissionService, Permissi
     public Set<String> getMenuPermission(Long userId) {
         Set<String> perms = new HashSet<>();
         // 管理员拥有所有权限
-        if (SecurityUtil.isSuperAdmin(userId)) {
+        if (AdminHelper.isSuperAdmin(userId)) {
             perms.add("*:*:*");
         } else {
             perms.addAll(menuService.selectMenuPermsByUserId(userId));

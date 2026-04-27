@@ -14,7 +14,7 @@ import org.lemon.commons.core.utils.MapstructUtils;
 import org.lemon.commons.core.utils.StreamUtils;
 import org.lemon.commons.core.utils.StringUtils;
 import org.lemon.commons.core.utils.TreeBuildUtils;
-import org.lemon.commons.security.utils.SecurityUtil;
+import org.lemon.commons.security.utils.AdminHelper;
 import org.lemon.system.domain.bo.SysMenuBo;
 import org.lemon.system.domain.entity.SysMenu;
 import org.lemon.system.domain.entity.SysRole;
@@ -73,7 +73,7 @@ public class SysMenuServiceImpl implements ISysMenuService {
         List<SysMenuVo> menuList;
         LambdaQueryWrapper<SysMenu> wrapper = new LambdaQueryWrapper<>();
         // 管理员显示所有菜单信息 不是管理员 按用户id过滤菜单
-        if (!SecurityUtil.isSuperAdmin(userId)) {
+        if (!AdminHelper.isSuperAdmin(userId)) {
             // 通过用户id获取角色id 通过角色id获取菜单id 然后in菜单
             wrapper.inSql(SysMenu::getMenuId, baseMapper.buildMenuByUserSql(userId));
         }
@@ -119,7 +119,7 @@ public class SysMenuServiceImpl implements ISysMenuService {
     @Override
     public List<SysMenu> selectMenuTreeByUserId(Long userId) {
         List<SysMenu> menus;
-        if (SecurityUtil.isSuperAdmin(userId)) {
+        if (AdminHelper.isSuperAdmin(userId)) {
             menus = baseMapper.selectMenuTreeAll();
         } else {
             LambdaQueryWrapper<SysMenu> wrapper = new LambdaQueryWrapper<>();

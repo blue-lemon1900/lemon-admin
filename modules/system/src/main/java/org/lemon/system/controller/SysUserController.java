@@ -21,7 +21,8 @@ import org.lemon.commons.mybatis.core.page.TableDataInfo;
 import org.lemon.commons.mybatis.helper.DataPermissionHelper;
 import org.lemon.commons.security.data.LoginUserInfo;
 import org.lemon.commons.security.data.model.RoleModel;
-import org.lemon.commons.security.utils.SecurityUtil;
+import org.lemon.commons.security.utils.AdminHelper;
+import org.lemon.commons.security.utils.SecurityContextHelper;
 import org.lemon.commons.tenant.helper.TenantHelper;
 import org.lemon.commons.web.core.BaseController;
 import org.lemon.system.domain.bo.SysDeptBo;
@@ -111,8 +112,8 @@ public class SysUserController extends BaseController {
      */
     @GetMapping("/getInfo")
     public R<UserInfoVo> getInfo() {
-        LoginUserInfo loginUser = SecurityUtil.getLoginUser();
-        if (TenantHelper.isEnable() && SecurityUtil.isSuperAdmin()) {
+        LoginUserInfo loginUser = SecurityContextHelper.getLoginUser();
+        if (TenantHelper.isEnable() && AdminHelper.isSuperAdmin()) {
             // 超级管理员 如果重新加载用户信息需清除动态租户
             TenantHelper.clearDynamic();
         }
@@ -154,7 +155,7 @@ public class SysUserController extends BaseController {
         SysRoleBo roleBo = new SysRoleBo();
         roleBo.setStatus(SystemConstants.NORMAL);
         List<SysRoleVo> roles = roleService.selectRoleList(roleBo);
-        userInfoVo.setRoles(SecurityUtil.isSuperAdmin(userId) ? roles : StreamUtils.filter(roles, r -> !r.isSuperAdmin()));
+        userInfoVo.setRoles(AdminHelper.isSuperAdmin(userId) ? roles : StreamUtils.filter(roles, r -> !r.isSuperAdmin()));
         return R.success(userInfoVo);
     }
 
@@ -213,7 +214,7 @@ public class SysUserController extends BaseController {
     @Log(title = "用户管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{userIds}")
     public R<Void> remove(@PathVariable Long[] userIds) {
-        if (ArrayUtil.contains(userIds, SecurityUtil.getLoginUserId())) {
+        if (ArrayUtil.contains(userIds, SecurityContextHelper.getLoginUserId())) {
             return R.fail("当前用户不能删除");
         }
         return toAjax(userService.deleteUserByIds(userIds));
@@ -274,7 +275,7 @@ public class SysUserController extends BaseController {
         SysUserInfoVo userInfoVo = new SysUserInfoVo();
         userInfoVo.setUser(user);
 
-        userInfoVo.setRoles(SecurityUtil.isSuperAdmin(userId) ? roles : StreamUtils.filter(roles, r -> !r.isSuperAdmin()));
+        userInfoVo.setRoles(AdminHelper.isSuperAdmin(userId) ? roles : StreamUtils.filter(roles, r -> !r.isSuperAdmin()));
         return R.success(userInfoVo);
     }
 

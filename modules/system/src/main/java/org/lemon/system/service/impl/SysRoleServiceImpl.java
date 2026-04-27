@@ -24,7 +24,8 @@ import org.lemon.commons.mybatis.core.page.TableDataInfo;
 import org.lemon.commons.redis.utils.RedisUtils;
 import org.lemon.commons.security.data.LoginUserInfo;
 import org.lemon.commons.security.data.model.RoleModel;
-import org.lemon.commons.security.utils.SecurityUtil;
+import org.lemon.commons.security.utils.AdminHelper;
+import org.lemon.commons.security.utils.SecurityContextHelper;
 import org.lemon.system.domain.bo.SysRoleBo;
 import org.lemon.system.domain.entity.SysRole;
 import org.lemon.system.domain.entity.SysRoleDept;
@@ -231,7 +232,7 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      */
     @Override
     public void checkRoleAllowed(SysRoleBo role) {
-        if (ObjectUtil.isNotNull(role.getRoleId()) && SecurityUtil.isSuperAdmin(role.getRoleId())) {
+        if (ObjectUtil.isNotNull(role.getRoleId()) && AdminHelper.isSuperAdmin(role.getRoleId())) {
             throw new ServiceException("不允许操作超级管理员角色");
         }
         String[] keys = new String[]{TenantConstants.SUPER_ADMIN_ROLE_KEY, TenantConstants.TENANT_ADMIN_ROLE_KEY};
@@ -274,7 +275,7 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      */
     @Override
     public void checkRoleDataScope(List<Long> roleIds) {
-        if (CollUtil.isEmpty(roleIds) || SecurityUtil.isSuperAdmin()) {
+        if (CollUtil.isEmpty(roleIds) || AdminHelper.isSuperAdmin()) {
             return;
         }
         long count = baseMapper.selectRoleCount(roleIds);
@@ -460,7 +461,7 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      */
     @Override
     public int deleteAuthUser(SysUserRole userRole) {
-        if (Objects.equals(SecurityUtil.getLoginUserId(), userRole.getUserId())) {
+        if (Objects.equals(SecurityContextHelper.getLoginUserId(), userRole.getUserId())) {
             throw new ServiceException("不允许修改当前用户角色!");
         }
         int rows = userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>()
@@ -482,7 +483,7 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
     @Override
     public int deleteAuthUsers(Long roleId, Long[] userIds) {
         List<Long> ids = List.of(userIds);
-        if (ids.contains(SecurityUtil.getLoginUserId())) {
+        if (ids.contains(SecurityContextHelper.getLoginUserId())) {
             throw new ServiceException("不允许修改当前用户角色!");
         }
         int rows = userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>()
@@ -506,7 +507,7 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
         // 新增用户与角色管理
         int rows = 1;
         List<Long> ids = List.of(userIds);
-        if (ids.contains(SecurityUtil.getLoginUserId())) {
+        if (ids.contains(SecurityContextHelper.getLoginUserId())) {
             throw new ServiceException("不允许修改当前用户角色!");
         }
         List<SysUserRole> list = StreamUtils.toList(ids, userId -> {
@@ -586,7 +587,7 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
 
         // 在线用户量过大会导致 Redis 阻塞卡顿，谨慎操作
         keys.parallelStream().forEach(token -> {
-            LoginUserInfo userInfo = SecurityUtil.getLoginUser(token);
+            LoginUserInfo userInfo = SecurityContextHelper.getLoginUser(token);
 
             if (userInfo != null && CollectionUtils.isNotEmpty(userInfo.getRoles())) {
                 boolean match = userInfo.getRoles().stream()

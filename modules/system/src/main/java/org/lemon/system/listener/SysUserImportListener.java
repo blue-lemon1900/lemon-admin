@@ -13,7 +13,7 @@ import org.lemon.commons.core.utils.StreamUtils;
 import org.lemon.commons.core.utils.ValidatorUtils;
 import org.lemon.commons.excel.core.ExcelListener;
 import org.lemon.commons.excel.core.ExcelResult;
-import org.lemon.commons.security.utils.SecurityUtil;
+import org.lemon.commons.security.utils.SecurityContextHelper;
 import org.lemon.system.domain.bo.SysUserBo;
 import org.lemon.system.domain.vo.SysUserImportVo;
 import org.lemon.system.domain.vo.SysUserVo;
@@ -49,7 +49,7 @@ public class SysUserImportListener extends AnalysisEventListener<SysUserImportVo
         String initPassword = configService.selectConfigByKey("sys.user.initPassword");
         this.password = passwordEncoder.encode(initPassword);
         this.isUpdateSupport = isUpdateSupport;
-        this.operUserId = SecurityUtil.getLoginUserId();
+        this.operUserId = SecurityContextHelper.getLoginUserId();
     }
 
     @Override

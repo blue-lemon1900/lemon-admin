@@ -13,7 +13,7 @@ import org.lemon.commons.idempotent.annotation.RepeatSubmit;
 import org.lemon.commons.log.annotation.Log;
 import org.lemon.commons.log.enums.BusinessType;
 import org.lemon.commons.mybatis.helper.DataPermissionHelper;
-import org.lemon.commons.security.utils.SecurityUtil;
+import org.lemon.commons.security.utils.SecurityContextHelper;
 import org.lemon.commons.web.core.BaseController;
 import org.lemon.system.domain.bo.SysUserBo;
 import org.lemon.system.domain.bo.SysUserPasswordBo;
@@ -51,7 +51,7 @@ public class SysProfileController extends BaseController {
      */
     @GetMapping
     public R<ProfileVo> profile() {
-        SysUserVo user = userService.selectUserById(SecurityUtil.getLoginUserId());
+        SysUserVo user = userService.selectUserById(SecurityContextHelper.getLoginUserId());
         String roleGroup = userService.selectUserRoleGroup(user.getUserId());
         String postGroup = userService.selectUserPostGroup(user.getUserId());
         // 单独做一个vo专门给个人中心用 避免数据被脱敏
@@ -68,8 +68,8 @@ public class SysProfileController extends BaseController {
     @PutMapping
     public R<Void> updateProfile(@Validated @RequestBody SysUserProfileBo profile) {
         SysUserBo user = BeanUtil.toBean(profile, SysUserBo.class);
-        user.setUserId(SecurityUtil.getLoginUserId());
-        String username = SecurityUtil.getLoginUserNickname();
+        user.setUserId(SecurityContextHelper.getLoginUserId());
+        String username = SecurityContextHelper.getLoginUserNickname();
         if (StringUtils.isNotEmpty(user.getPhonenumber()) && !userService.checkPhoneUnique(user)) {
             return R.fail("修改用户'" + username + "'失败，手机号码已存在");
         }
@@ -92,7 +92,7 @@ public class SysProfileController extends BaseController {
     @Log(title = "个人信息", businessType = BusinessType.UPDATE)
     @PutMapping("/updatePwd")
     public R<Void> updatePwd(@Validated @RequestBody SysUserPasswordBo bo) {
-        SysUserVo user = userService.selectUserById(SecurityUtil.getLoginUserId());
+        SysUserVo user = userService.selectUserById(SecurityContextHelper.getLoginUserId());
         String password = user.getPassword();
         if (!passwordEncoder.matches(bo.getOldPassword(), password)) {
             return R.fail("修改密码失败，旧密码错误");
@@ -123,7 +123,7 @@ public class SysProfileController extends BaseController {
             }
             SysOssVo oss = ossService.upload(avatarfile);
             String avatar = oss.getUrl();
-            boolean updateSuccess = DataPermissionHelper.ignore(() -> userService.updateUserAvatar(SecurityUtil.getLoginUserId(), oss.getOssId()));
+            boolean updateSuccess = DataPermissionHelper.ignore(() -> userService.updateUserAvatar(SecurityContextHelper.getLoginUserId(), oss.getOssId()));
             if (updateSuccess) {
                 return R.success(new AvatarVo(avatar));
             }

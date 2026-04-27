@@ -1,7 +1,9 @@
 package org.lemon.system.service.impl;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.lemon.commons.security.utils.SecurityUtil;
+import org.lemon.commons.security.utils.AdminHelper;
+import org.lemon.commons.security.utils.AuthorityHelper;
+import org.lemon.commons.security.utils.SecurityContextHelper;
 import org.lemon.commons.sensitive.core.SensitiveService;
 import org.springframework.stereotype.Service;
 
@@ -21,23 +23,23 @@ public class SysSensitiveServiceImpl implements SensitiveService {
      */
     @Override
     public boolean isSensitive(String[] roleKey, String[] perms) {
-        if (!SecurityUtil.isLogin()) {
+        if (!SecurityContextHelper.isLogin()) {
             return true;
         }
 
         boolean roleExist = ArrayUtils.isNotEmpty(roleKey);
         boolean permsExist = ArrayUtils.isNotEmpty(perms);
 
-        if (roleExist && permsExist && SecurityUtil.hasAnyRole(roleKey) && SecurityUtil.hasAnyAuthority(perms)) {
+        if (roleExist && permsExist && AuthorityHelper.hasAnyRole(roleKey) && AuthorityHelper.hasAnyAuthority(perms)) {
             return false;
-        } else if (roleExist && SecurityUtil.hasAnyRole(roleKey)) {
+        } else if (roleExist && AuthorityHelper.hasAnyRole(roleKey)) {
             return false;
-        } else if (permsExist && SecurityUtil.hasAnyAuthority(perms)) {
+        } else if (permsExist && AuthorityHelper.hasAnyAuthority(perms)) {
             return false;
         }
 
         // 超级管理员不用脱敏
-        return !SecurityUtil.isSuperAdmin();
+        return !AdminHelper.isSuperAdmin();
     }
 
 }

@@ -3,7 +3,7 @@ package org.lemon.commons.sse.controller;
 import lombok.RequiredArgsConstructor;
 import org.lemon.commons.core.domain.result.R;
 import org.lemon.commons.security.annotation.AnonymousAccess;
-import org.lemon.commons.security.utils.SecurityUtil;
+import org.lemon.commons.security.utils.SecurityContextHelper;
 import org.lemon.commons.sse.core.SseEmitterManager;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -29,11 +29,11 @@ public class SseController implements DisposableBean {
      */
     @GetMapping(value = "${sse.path}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter connect() {
-        if (!SecurityUtil.isLogin()) {
+        if (!SecurityContextHelper.isLogin()) {
             return null;
         }
-        String tokenValue = SecurityUtil.getTokenValue();
-        Long userId = SecurityUtil.getLoginUserId();
+        String tokenValue = SecurityContextHelper.getTokenValue();
+        Long userId = SecurityContextHelper.getLoginUserId();
         return sseEmitterManager.connect(userId, tokenValue);
     }
 
@@ -43,8 +43,8 @@ public class SseController implements DisposableBean {
     @AnonymousAccess
     @GetMapping(value = "${sse.path}/close")
     public R<Void> close() {
-        String tokenValue = SecurityUtil.getTokenValue();
-        Long userId = SecurityUtil.getLoginUserId();
+        String tokenValue = SecurityContextHelper.getTokenValue();
+        Long userId = SecurityContextHelper.getLoginUserId();
         sseEmitterManager.disconnect(userId, tokenValue);
         return R.success();
     }

@@ -22,7 +22,8 @@ import org.lemon.commons.mybatis.core.enums.DataScopeType;
 import org.lemon.commons.mybatis.helper.DataPermissionHelper;
 import org.lemon.commons.security.data.LoginUserInfo;
 import org.lemon.commons.security.data.model.RoleModel;
-import org.lemon.commons.security.utils.SecurityUtil;
+import org.lemon.commons.security.utils.AdminHelper;
+import org.lemon.commons.security.utils.SecurityContextHelper;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.expression.*;
 import org.springframework.expression.common.TemplateParserContext;
@@ -66,11 +67,11 @@ public class PlusDataPermissionHandler {
             // 获取当前登录用户信息
             LoginUserInfo currentUser = DataPermissionHelper.getVariable("user");
             if (ObjectUtil.isNull(currentUser)) {
-                currentUser = SecurityUtil.getLoginUser();
+                currentUser = SecurityContextHelper.getLoginUser();
                 DataPermissionHelper.setVariable("user", currentUser);
             }
             // 如果是超级管理员或租户管理员，则不过滤数据
-            if (SecurityUtil.isSuperAdmin() || SecurityUtil.isTenantAdmin()) {
+            if (AdminHelper.isSuperAdmin() || AdminHelper.isTenantAdmin()) {
                 return where;
             }
             // 构造数据过滤条件的 SQL 片段

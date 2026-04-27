@@ -22,7 +22,7 @@ import org.lemon.commons.log.annotation.Log;
 import org.lemon.commons.log.enums.BusinessStatus;
 import org.lemon.commons.log.event.OperLogEvent;
 import org.lemon.commons.security.data.LoginUserInfo;
-import org.lemon.commons.security.utils.SecurityUtil;
+import org.lemon.commons.security.utils.SecurityContextHelper;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.http.HttpMethod;
 import org.springframework.validation.BindingResult;
@@ -94,7 +94,7 @@ public class LogAspect {
             String ip = ServletUtils.getClientIP();
             operLog.setOperIp(ip);
             operLog.setOperUrl(StringUtils.substring(Objects.requireNonNull(ServletUtils.getRequest()).getRequestURI(), 0, 255));
-            LoginUserInfo loginUser = SecurityUtil.getLoginUser();
+            LoginUserInfo loginUser = SecurityContextHelper.getLoginUser();
             operLog.setOperName(Objects.requireNonNull(loginUser).getUsername());
             operLog.setDeptName(loginUser.getDeptName());
 

@@ -32,7 +32,8 @@ import org.lemon.commons.redis.utils.RedisUtils;
 import org.lemon.commons.security.data.LoginUserInfo;
 import org.lemon.commons.security.data.model.RoleModel;
 import org.lemon.commons.security.service.UsernameService;
-import org.lemon.commons.security.utils.SecurityUtil;
+import org.lemon.commons.security.utils.AdminHelper;
+import org.lemon.commons.security.utils.SecurityContextHelper;
 import org.lemon.system.domain.bo.SysUserBo;
 import org.lemon.system.domain.entity.SysUser;
 import org.lemon.system.domain.entity.SysUserPost;
@@ -303,7 +304,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService, Usernam
      */
     @Override
     public void checkUserAllowed(Long userId) {
-        if (ObjectUtil.isNotNull(userId) && SecurityUtil.isSuperAdmin(userId)) {
+        if (ObjectUtil.isNotNull(userId) && AdminHelper.isSuperAdmin(userId)) {
             throw new ServiceException("不允许操作超级管理员用户");
         }
     }
@@ -318,7 +319,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService, Usernam
         if (ObjectUtil.isNull(userId)) {
             return;
         }
-        if (SecurityUtil.isSuperAdmin()) {
+        if (AdminHelper.isSuperAdmin()) {
             return;
         }
         if (baseMapper.countUserById(userId) == 0) {
@@ -518,7 +519,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService, Usernam
         List<Long> roleList = new ArrayList<>(Arrays.asList(roleIds));
 
         // 非超级管理员，禁止包含超级管理员角色
-        if (!SecurityUtil.isSuperAdmin(userId)) {
+        if (!AdminHelper.isSuperAdmin(userId)) {
             roleList.remove(SystemConstants.SUPER_ADMIN_ID);
         }
 
@@ -860,7 +861,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService, Usernam
 
         Set<String> menuList;
         // 判断是否是为管理员
-        if (SecurityUtil.isTenantAdmin(roles.stream().map(RoleModel::getRoleKey).collect(Collectors.toSet()))) {
+        if (AdminHelper.isTenantAdmin(roles.stream().map(RoleModel::getRoleKey).collect(Collectors.toSet()))) {
             menuList = menuMapper.selectMenuPermsAll();
         } else {
             menuList = menuMapper.selectMenuPermsByRoleIds(roles.stream().map(RoleModel::getRoleId).collect(Collectors.toSet()));
@@ -878,7 +879,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService, Usernam
      */
     @Override
     public void logout() {
-        LoginUserInfo loginUser = SecurityUtil.getLoginUser();
+        LoginUserInfo loginUser = SecurityContextHelper.getLoginUser();
         if (loginUser != null) {
             RedisUtils.deleteObject(ACCESS_TOKEN + loginUser.getAccessToken());
             RedisUtils.deleteObject(REFRESH_TOKEN + loginUser.getRefreshToken());

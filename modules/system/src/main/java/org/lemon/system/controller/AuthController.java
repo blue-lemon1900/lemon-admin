@@ -14,7 +14,7 @@ import org.lemon.commons.security.annotation.AnonymousAccess;
 import org.lemon.commons.security.data.LoginUserInfo;
 import org.lemon.commons.security.data.vo.AuthLoginRespVO;
 import org.lemon.commons.security.service.UsernameService;
-import org.lemon.commons.security.utils.SecurityUtil;
+import org.lemon.commons.security.utils.AdminHelper;
 import org.lemon.commons.tenant.helper.TenantHelper;
 import org.lemon.system.domain.bo.RefreshTokenBo;
 import org.lemon.system.domain.bo.SysTenantBo;
@@ -88,7 +88,7 @@ public class AuthController {
         List<SysTenantVo> tenantList = tenantService.queryList(new SysTenantBo());
         List<TenantListVo> voList = MapstructUtils.convert(tenantList, TenantListVo.class);
         // 如果只超管返回所有租户
-        if (SecurityUtil.isSuperAdmin()) {
+        if (AdminHelper.isSuperAdmin()) {
             result.setVoList(voList);
             return R.success(result);
         }

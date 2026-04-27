@@ -3,7 +3,7 @@ package org.lemon.commons.security.login.username;
 import lombok.Getter;
 import lombok.Setter;
 import org.lemon.commons.security.data.LoginUserInfo;
-import org.lemon.commons.security.utils.SecurityUtil;
+import org.lemon.commons.security.utils.AuthorityHelper;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -75,7 +75,7 @@ public class UsernameAuthentication extends AbstractAuthenticationToken {
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
         if (isAuthenticated() && currentUser != null) {
-            return SecurityUtil.buildAuthorities(currentUser);
+            return AuthorityHelper.buildAuthorities(currentUser);
         }
         return super.getAuthorities();
     }

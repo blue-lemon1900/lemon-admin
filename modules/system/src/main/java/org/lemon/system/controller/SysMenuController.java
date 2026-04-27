@@ -12,7 +12,7 @@ import org.lemon.commons.log.annotation.Log;
 import org.lemon.commons.log.enums.BusinessType;
 import org.lemon.commons.security.annotation.RequireSuperAdminAndPerm;
 import org.lemon.commons.security.annotation.RequireTenantAdminAndPerm;
-import org.lemon.commons.security.utils.SecurityUtil;
+import org.lemon.commons.security.utils.SecurityContextHelper;
 import org.lemon.commons.web.core.BaseController;
 import org.lemon.system.domain.bo.SysMenuBo;
 import org.lemon.system.domain.entity.SysMenu;
@@ -43,7 +43,7 @@ public class SysMenuController extends BaseController {
      */
     @GetMapping("/getRouters")
     public R<List<RouterVo>> getRouters() {
-        List<SysMenu> menus = menuService.selectMenuTreeByUserId(SecurityUtil.getLoginUserId());
+        List<SysMenu> menus = menuService.selectMenuTreeByUserId(SecurityContextHelper.getLoginUserId());
         return R.success(menuService.buildMenus(menus));
     }
 
@@ -54,7 +54,7 @@ public class SysMenuController extends BaseController {
     @RequireTenantAdminAndPerm("system:menu:list")
     @GetMapping("/list")
     public R<List<SysMenuVo>> list(SysMenuBo menu) {
-        List<SysMenuVo> menus = menuService.selectMenuList(menu, SecurityUtil.getLoginUserId());
+        List<SysMenuVo> menus = menuService.selectMenuList(menu, SecurityContextHelper.getLoginUserId());
 
         return R.success(menus);
     }
@@ -76,7 +76,7 @@ public class SysMenuController extends BaseController {
     @PreAuthorize("hasAuthority('system:menu:query')")
     @GetMapping("/treeselect")
     public R<List<Tree<Long>>> treeselect(SysMenuBo menu) {
-        List<SysMenuVo> menus = menuService.selectMenuList(menu, SecurityUtil.getLoginUserId());
+        List<SysMenuVo> menus = menuService.selectMenuList(menu, SecurityContextHelper.getLoginUserId());
         return R.success(menuService.buildMenuTreeSelect(menus));
     }
 
@@ -88,7 +88,7 @@ public class SysMenuController extends BaseController {
     @PreAuthorize("hasAuthority('system:menu:query')")
     @GetMapping(value = "/roleMenuTreeselect/{roleId}")
     public R<MenuTreeSelectVo> roleMenuTreeselect(@PathVariable("roleId") Long roleId) {
-        List<SysMenuVo> menus = menuService.selectMenuList(SecurityUtil.getLoginUserId());
+        List<SysMenuVo> menus = menuService.selectMenuList(SecurityContextHelper.getLoginUserId());
         MenuTreeSelectVo selectVo = new MenuTreeSelectVo(
                 menuService.selectMenuListByRoleId(roleId),
                 menuService.buildMenuTreeSelect(menus));
@@ -103,7 +103,7 @@ public class SysMenuController extends BaseController {
     @RequireSuperAdminAndPerm("system:menu:query")
     @GetMapping(value = "/tenantPackageMenuTreeselect/{packageId}")
     public R<MenuTreeSelectVo> tenantPackageMenuTreeselect(@PathVariable("packageId") Long packageId) {
-        List<SysMenuVo> menus = menuService.selectMenuList(SecurityUtil.getLoginUserId());
+        List<SysMenuVo> menus = menuService.selectMenuList(SecurityContextHelper.getLoginUserId());
         List<Tree<Long>> list = menuService.buildMenuTreeSelect(menus);
         // 删除租户管理菜单
         list.removeIf(menu -> menu.getId() == 6L);
