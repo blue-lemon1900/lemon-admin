@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.lemon.commons.encrypt.core.EncryptorManager;
 import org.lemon.commons.encrypt.interceptor.MybatisDecryptInterceptor;
 import org.lemon.commons.encrypt.interceptor.MybatisEncryptInterceptor;
-import org.lemon.commons.encrypt.properties.EncryptorProperties;
+import org.lemon.commons.encrypt.config.properties.EncryptorProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Bean;
  */
 @AutoConfiguration(after = MybatisPlusAutoConfiguration.class)
 @EnableConfigurationProperties(EncryptorProperties.class)
-@ConditionalOnProperty(value = "mybatis-encryptor.enable", havingValue = "true")
+@ConditionalOnProperty(value = "lemon.encrypt.mybatis.enable", havingValue = "true")
 @Slf4j
 public class EncryptorAutoConfiguration {
 

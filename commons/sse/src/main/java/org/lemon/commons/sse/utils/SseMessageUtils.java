@@ -16,7 +16,7 @@ import org.lemon.commons.sse.dto.SseMessageDto;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SseMessageUtils {
 
-    private final static Boolean SSE_ENABLE = SpringUtils.getProperty("sse.enabled", Boolean.class, true);
+    private final static Boolean SSE_ENABLE = SpringUtils.getProperty("lemon.sse.enabled", Boolean.class, true);
     private static SseEmitterManager MANAGER;
 
     static {

@@ -2,7 +2,7 @@ package org.lemon.commons.encrypt.config;
 
 import jakarta.servlet.DispatcherType;
 import org.lemon.commons.encrypt.filter.CryptoFilter;
-import org.lemon.commons.encrypt.properties.ApiDecryptProperties;
+import org.lemon.commons.encrypt.config.properties.ApiDecryptProperties;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -20,7 +20,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
  */
 @AutoConfiguration
 @EnableConfigurationProperties(ApiDecryptProperties.class)
-@ConditionalOnProperty(value = "api-decrypt.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "lemon.encrypt.api.enabled", havingValue = "true")
 public class ApiDecryptAutoConfiguration {
 
     @Bean

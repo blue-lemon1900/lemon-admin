@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerIntercept
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import org.lemon.commons.core.factory.YmlPropertySourceFactory;
 import org.lemon.commons.mybatis.aspect.DataPermissionPointcutAdvisor;
+import org.lemon.commons.mybatis.config.properties.MybatisPlusExtensionProperties;
 import org.lemon.commons.mybatis.handler.InjectionMetaObjectHandler;
 import org.lemon.commons.mybatis.handler.MybatisExceptionHandler;
 import org.lemon.commons.mybatis.handler.PlusPostInitTableInfoHandler;
@@ -18,6 +19,7 @@ import org.lemon.commons.mybatis.interceptor.PlusDataPermissionInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Role;
@@ -49,7 +51,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 @EnableTransactionManagement(proxyTargetClass = true)
-@MapperScan("${mybatis-plus.mapperPackage}")
+@EnableConfigurationProperties(MybatisPlusExtensionProperties.class)
+@MapperScan("${mybatis-plus.mapper-package}")
 @PropertySource(value = "classpath:common-mybatis.yml", factory = YmlPropertySourceFactory.class)
 public class MybatisPlusConfig {
 
@@ -130,7 +133,7 @@ public class MybatisPlusConfig {
      * 初始化表对象处理器
      */
     @Bean
-    public PostInitTableInfoHandler postInitTableInfoHandler() {
-        return new PlusPostInitTableInfoHandler();
+    public PostInitTableInfoHandler postInitTableInfoHandler(MybatisPlusExtensionProperties properties) {
+        return new PlusPostInitTableInfoHandler(properties);
     }
 }

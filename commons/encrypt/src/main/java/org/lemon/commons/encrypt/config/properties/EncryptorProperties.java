@@ -1,4 +1,4 @@
-package org.lemon.commons.encrypt.properties;
+package org.lemon.commons.encrypt.config.properties;
 
 import lombok.Data;
 import org.lemon.commons.encrypt.enumd.AlgorithmType;
@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @version 4.6.0
  */
 @Data
-@ConfigurationProperties(prefix = "mybatis-encryptor")
+@ConfigurationProperties(prefix = "lemon.encrypt.mybatis")
 public class EncryptorProperties {
 
     /**

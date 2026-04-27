@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Lion Li
  */
 @Data
-@ConfigurationProperties(prefix = "captcha")
+@ConfigurationProperties(prefix = "lemon.captcha")
 public class CaptchaProperties {
 
     /**

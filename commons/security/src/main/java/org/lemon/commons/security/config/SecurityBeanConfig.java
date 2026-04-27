@@ -116,7 +116,7 @@ public class SecurityBeanConfig {
     @Bean
     public UsernameAuthenticationProvider usernameAuthenticationProvider(UsernameService usernameService,
                                                                          PasswordEncoder passwordEncoder,
-                                                                         @Value("${tenant.enable:false}") boolean tenantEnable) {
+                                                                         @Value("${lemon.tenant.enable:false}") boolean tenantEnable) {
         return new UsernameAuthenticationProvider(usernameService, passwordEncoder, tenantEnable);
     }
 

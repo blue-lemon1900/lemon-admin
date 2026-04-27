@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/system/tenant")
-@ConditionalOnProperty(value = "tenant.enable", havingValue = "true")
+@ConditionalOnProperty(value = "lemon.tenant.enable", havingValue = "true")
 public class SysTenantController extends BaseController {
 
     private final ISysTenantService tenantService;

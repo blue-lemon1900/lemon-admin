@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Primary;
  * @author Lion Li
  */
 @AutoConfiguration(after = {RedisConfig.class})
-@ConditionalOnProperty(value = "tenant.enable", havingValue = "true")
+@ConditionalOnProperty(value = "lemon.tenant.enable", havingValue = "true")
 @EnableConfigurationProperties(TenantProperties.class)
 public class TenantConfig {
 

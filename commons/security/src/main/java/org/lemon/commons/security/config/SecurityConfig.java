@@ -70,7 +70,7 @@ public class SecurityConfig {
                                                 AuthenticationFailureHandler authenticationFailureHandler,
                                                 CaptchaService captchaService,
                                                 CaptchaProperties captchaProperties,
-                                                @Value("${tenant.enable:false}") boolean tenantEnable) {
+                                                @Value("${lemon.tenant.enable:false}") boolean tenantEnable) {
         // 禁用默认 Filter
         commonHttpSetting(http);
 

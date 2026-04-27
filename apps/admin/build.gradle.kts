@@ -17,6 +17,16 @@ dependencies {
             classifier = "osx-aarch_64"
         }
     }
+
+    // 直接依赖 application.yml 里配置的所有模块
+    implementation(project(":core"))
+    implementation(project(":encrypt"))
+    implementation(project(":web"))
+    implementation(project(":sse"))
+    implementation(project(":security"))
+    implementation(project(":tenant"))
+    implementation(project(":mail"))
+    implementation(project(":mybatis"))
 }
 
 tasks.withType<Test>().configureEach {

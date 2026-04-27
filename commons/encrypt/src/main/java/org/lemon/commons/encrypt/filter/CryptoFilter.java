@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.lemon.commons.core.exceptions.ServiceException;
 import org.lemon.commons.core.utils.StringUtils;
 import org.lemon.commons.encrypt.annotation.ApiEncrypt;
-import org.lemon.commons.encrypt.properties.ApiDecryptProperties;
+import org.lemon.commons.encrypt.config.properties.ApiDecryptProperties;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.method.HandlerMethod;

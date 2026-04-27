@@ -1,5 +1,6 @@
 package org.lemon.commons.sse.config;
 
+import org.lemon.commons.sse.config.properties.SseProperties;
 import org.lemon.commons.sse.controller.SseController;
 import org.lemon.commons.sse.core.SseEmitterManager;
 import org.lemon.commons.sse.listener.SseTopicListener;
@@ -14,7 +15,7 @@ import org.springframework.context.annotation.Bean;
  * @author Lion Li
  */
 @AutoConfiguration
-@ConditionalOnProperty(value = "sse.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "lemon.sse.enabled", havingValue = "true")
 @EnableConfigurationProperties(SseProperties.class)
 public class SseAutoConfiguration {
 

@@ -14,7 +14,7 @@ import org.lemon.commons.encrypt.core.EncryptContext;
 import org.lemon.commons.encrypt.core.EncryptorManager;
 import org.lemon.commons.encrypt.enumd.AlgorithmType;
 import org.lemon.commons.encrypt.enumd.EncodeType;
-import org.lemon.commons.encrypt.properties.EncryptorProperties;
+import org.lemon.commons.encrypt.config.properties.EncryptorProperties;
 
 import java.lang.reflect.Field;
 import java.sql.Statement;

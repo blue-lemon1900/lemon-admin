@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Bean;
 public class FilterConfig {
 
     @Bean
-    @ConditionalOnProperty(value = "xss.enabled", havingValue = "true")
+    @ConditionalOnProperty(value = "lemon.xss.enabled", havingValue = "true")
     public FilterRegistrationBean<XssFilter> xssFilterRegistration() {
         FilterRegistrationBean<XssFilter> registration = new FilterRegistrationBean<>();
         registration.setDispatcherTypes(DispatcherType.REQUEST);

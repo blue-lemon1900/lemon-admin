@@ -11,7 +11,7 @@ import java.util.List;
  * @author Lion Li
  */
 @Data
-@ConfigurationProperties(prefix = "tenant")
+@ConfigurationProperties(prefix = "lemon.tenant")
 public class TenantProperties {
 
     /**

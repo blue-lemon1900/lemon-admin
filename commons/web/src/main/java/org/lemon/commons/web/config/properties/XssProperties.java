@@ -12,7 +12,7 @@ import java.util.List;
  * @author Lion Li
  */
 @Data
-@ConfigurationProperties(prefix = "xss")
+@ConfigurationProperties(prefix = "lemon.xss")
 public class XssProperties {
 
     /**

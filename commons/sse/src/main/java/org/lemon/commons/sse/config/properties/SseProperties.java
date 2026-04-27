@@ -1,4 +1,4 @@
-package org.lemon.commons.sse.config;
+package org.lemon.commons.sse.config.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Lion Li
  */
 @Data
-@ConfigurationProperties("sse")
+@ConfigurationProperties("lemon.sse")
 public class SseProperties {
 
     private Boolean enabled;

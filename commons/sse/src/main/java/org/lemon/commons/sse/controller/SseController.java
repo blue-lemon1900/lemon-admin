@@ -18,7 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
  * @author Lion Li
  */
 @RestController
-@ConditionalOnProperty(value = "sse.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "lemon.sse.enabled", havingValue = "true")
 @RequiredArgsConstructor
 public class SseController implements DisposableBean {
 
@@ -27,7 +27,7 @@ public class SseController implements DisposableBean {
     /**
      * 建立 SSE 连接
      */
-    @GetMapping(value = "${sse.path}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "${lemon.sse.path}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter connect() {
         if (!SecurityContextHelper.isLogin()) {
             return null;
@@ -41,7 +41,7 @@ public class SseController implements DisposableBean {
      * 关闭 SSE 连接
      */
     @AnonymousAccess
-    @GetMapping(value = "${sse.path}/close")
+    @GetMapping(value = "${lemon.sse.path}/close")
     public R<Void> close() {
         String tokenValue = SecurityContextHelper.getTokenValue();
         Long userId = SecurityContextHelper.getLoginUserId();

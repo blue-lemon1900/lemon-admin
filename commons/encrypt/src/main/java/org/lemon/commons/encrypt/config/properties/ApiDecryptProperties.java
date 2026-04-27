@@ -1,4 +1,4 @@
-package org.lemon.commons.encrypt.properties;
+package org.lemon.commons.encrypt.config.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author wdhcr
  */
 @Data
-@ConfigurationProperties(prefix = "api-decrypt")
+@ConfigurationProperties(prefix = "lemon.encrypt.api")
 public class ApiDecryptProperties {
 
     /**

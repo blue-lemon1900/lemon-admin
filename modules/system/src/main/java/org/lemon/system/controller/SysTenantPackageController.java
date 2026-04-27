@@ -33,7 +33,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/system/tenant/package")
-@ConditionalOnProperty(value = "tenant.enable", havingValue = "true")
+@ConditionalOnProperty(value = "lemon.tenant.enable", havingValue = "true")
 public class SysTenantPackageController extends BaseController {
 
     private final ISysTenantPackageService tenantPackageService;
