@@ -31,7 +31,7 @@ import java.io.IOException;
  **/
 @Slf4j
 @RequiredArgsConstructor
-public class GlobalSpringSecurityExceptionFilter extends OncePerRequestFilter {
+public class GlobalExceptionFilter extends OncePerRequestFilter {
 
     private final HandlerExceptionResolver handlerExceptionResolver;
 

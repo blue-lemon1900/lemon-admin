@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.lemon.commons.core.config.properties.CaptchaProperties;
 import org.lemon.commons.security.authorization.AnonymousAccessAuthorizationManager;
 import org.lemon.commons.security.config.properties.SecurityProperties;
-import org.lemon.commons.security.filter.GlobalSpringSecurityExceptionFilter;
+import org.lemon.commons.security.filter.GlobalExceptionFilter;
 import org.lemon.commons.security.filter.TokenAuthenticationFilter;
 import org.lemon.commons.security.login.captcha.CaptchaValidationFilter;
 import org.lemon.commons.security.login.username.UsernameAuthenticationFilter;
@@ -49,7 +49,7 @@ public class SecurityConfig {
     /**
      * 注入过滤链异常处理Bean
      */
-    private final FilterRegistrationBean<GlobalSpringSecurityExceptionFilter> filterFilterRegistrationBean;
+    private final FilterRegistrationBean<GlobalExceptionFilter> filterFilterRegistrationBean;
 
     /**
      * 登录验证过滤链

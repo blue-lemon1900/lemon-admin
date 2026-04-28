@@ -1,7 +1,7 @@
 package org.lemon.commons.security.config;
 
 import org.lemon.commons.security.config.properties.SecurityProperties;
-import org.lemon.commons.security.filter.GlobalSpringSecurityExceptionFilter;
+import org.lemon.commons.security.filter.GlobalExceptionFilter;
 import org.lemon.commons.security.handler.LoginFailHandler;
 import org.lemon.commons.security.handler.LoginSuccessHandler;
 import org.lemon.commons.security.handler.exception.AccessDeniedHandlerImpl;
@@ -128,9 +128,9 @@ public class SecurityBeanConfig {
      * {@code @RestControllerAdvice}（{@code GlobalExceptionHandler}）统一处理。
      */
     @Bean
-    public FilterRegistrationBean<GlobalSpringSecurityExceptionFilter> tenantFilterRegistration(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver handlerExceptionResolver) {
-        GlobalSpringSecurityExceptionFilter filter = new GlobalSpringSecurityExceptionFilter(handlerExceptionResolver);
-        FilterRegistrationBean<GlobalSpringSecurityExceptionFilter> registration = new FilterRegistrationBean<>(filter);
+    public FilterRegistrationBean<GlobalExceptionFilter> tenantFilterRegistration(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver handlerExceptionResolver) {
+        GlobalExceptionFilter filter = new GlobalExceptionFilter(handlerExceptionResolver);
+        FilterRegistrationBean<GlobalExceptionFilter> registration = new FilterRegistrationBean<>(filter);
 
         // 并将其 enabled 属性设置为 false 来告诉 Spring Boot 不要将其注册到容器中
         registration.setEnabled(false);
