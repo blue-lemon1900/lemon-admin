@@ -8,6 +8,7 @@ import org.lemon.commons.security.handler.exception.AccessDeniedHandlerImpl;
 import org.lemon.commons.security.handler.exception.AuthenticationEntryPointImpl;
 import org.lemon.commons.security.login.username.UsernameAuthenticationProvider;
 import org.lemon.commons.security.service.UsernameService;
+import org.lemon.commons.security.service.impl.OnlineUserServiceImpl;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -40,13 +41,13 @@ public class SecurityBeanConfig {
     /**
      * 密码加密使用的编码器。
      * <p>
-     * 采用 Spring Security 7 推荐的 {@link DelegatingPasswordEncoder}：
+     * 采用 Spring Security 7 推荐的 {@code  DelegatingPasswordEncoder}：
      * <ul>
      *   <li>新密码用 {@code lemon.security.password-encoder-id} 配置的算法编码（默认 argon2），
      *       存储格式为 {@code {argon2}...}；切换 yml 配置即可迁移加密算法</li>
      *   <li>历史 {@code {bcrypt}} / {@code {pbkdf2}} / {@code {scrypt}} 前缀仍可正确校验，
      *       便于平滑迁移；登录时由 {@code UsernameAuthenticationProvider}
-     *       通过 {@link PasswordEncoder#upgradeEncoding(String)} 触发自动升级到当前 idForEncode。</li>
+     *       通过 {@code PasswordEncoder#upgradeEncoding(String)} 触发自动升级到当前 idForEncode。</li>
      *   <li>{@code setDefaultPasswordEncoderForMatches}：兼容数据库中"无 {id} 前缀"的纯
      *       {@code $2a$..} 老 bcrypt 串，避免直接抛 IllegalArgumentException。</li>
      * </ul>
@@ -118,6 +119,16 @@ public class SecurityBeanConfig {
                                                                          PasswordEncoder passwordEncoder,
                                                                          @Value("${lemon.tenant.enable:false}") boolean tenantEnable) {
         return new UsernameAuthenticationProvider(usernameService, passwordEncoder, tenantEnable);
+    }
+
+    /**
+     * 在线用户管理：维护 userId → accessToken 反向索引，支持踢人与在线列表查询。
+     * <p>返回类型用具体实现类，使其同时实现的 {@code SessionRegistry}（写边）与
+     * {@code OnlineSessionAdmin}（读边 + 管理操作）两个接口都能被 Spring 按类型注入。</p>
+     */
+    @Bean
+    public OnlineUserServiceImpl onlineUserService() {
+        return new OnlineUserServiceImpl();
     }
 
     /**

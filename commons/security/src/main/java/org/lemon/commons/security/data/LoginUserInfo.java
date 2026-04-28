@@ -5,6 +5,7 @@ import org.lemon.commons.security.data.model.RoleModel;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -75,4 +76,19 @@ public class LoginUserInfo implements Serializable {
      * 刷新令牌
      */
     private String refreshToken;
+
+    /**
+     * 登录时间（首次登录时刻，token 续期不更新）
+     */
+    private LocalDateTime loginTime;
+
+    /**
+     * 登录 IP（首次登录时刻，token 续期不更新）
+     */
+    private String loginIp;
+
+    /**
+     * User-Agent 原始字符串（用于在线列表区分客户端来源，例如 web/app）
+     */
+    private String userAgent;
 }

@@ -41,4 +41,10 @@ public interface GlobalConstants {
      * 刷新token
      */
     String REFRESH_TOKEN = GLOBAL_REDIS_KEY + "refresh_token:";
+
+    /**
+     * 在线用户索引：value 为该用户当前持有的所有 access token 集合
+     * <p>用途：支持「按 userId 一键踢出全部端」「列出在线用户」</p>
+     */
+    String ONLINE_USER = GLOBAL_REDIS_KEY + "online_user:";
 }

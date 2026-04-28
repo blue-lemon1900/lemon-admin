@@ -12,19 +12,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lemon.commons.core.constant.CacheNames;
 import org.lemon.commons.core.constant.SystemConstants;
-import org.lemon.commons.systemapi.domain.dto.UserDTO;
 import org.lemon.commons.core.exceptions.ServiceException;
-import org.lemon.commons.core.exceptions.user.UserException;
 import org.lemon.commons.core.exceptions.auth.InvalidTokenException;
-import org.lemon.commons.systemapi.service.UserService;
-import org.lemon.commons.core.utils.MapstructUtils;
-import org.lemon.commons.core.utils.ObjectUtils;
-import org.lemon.commons.core.utils.StreamUtils;
-import org.lemon.commons.core.utils.StringUtils;
+import org.lemon.commons.core.exceptions.user.UserException;
+import org.lemon.commons.core.utils.*;
 import org.lemon.commons.core.utils.spring.SpringUtils;
 import org.lemon.commons.mybatis.core.page.PageQuery;
 import org.lemon.commons.mybatis.core.page.TableDataInfo;
@@ -32,9 +28,12 @@ import org.lemon.commons.mybatis.helper.DataPermissionHelper;
 import org.lemon.commons.redis.utils.RedisUtils;
 import org.lemon.commons.security.data.LoginUserInfo;
 import org.lemon.commons.security.data.model.RoleModel;
+import org.lemon.commons.security.service.SessionRegistry;
 import org.lemon.commons.security.service.UsernameService;
 import org.lemon.commons.security.utils.AdminHelper;
 import org.lemon.commons.security.utils.SecurityContextHelper;
+import org.lemon.commons.systemapi.domain.dto.UserDTO;
+import org.lemon.commons.systemapi.service.UserService;
 import org.lemon.system.domain.bo.SysUserBo;
 import org.lemon.system.domain.entity.SysUser;
 import org.lemon.system.domain.entity.SysUserPost;
@@ -51,6 +50,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -82,6 +82,8 @@ public class SysUserServiceImpl implements ISysUserService, UserService, Usernam
     private final SysUserRoleMapper userRoleMapper;
 
     private final SysUserPostMapper userPostMapper;
+
+    private final SessionRegistry sessionRegistry;
 
     @Override
     public TableDataInfo<SysUserVo> selectPageUserList(SysUserBo user, PageQuery pageQuery) {
@@ -870,20 +872,24 @@ public class SysUserServiceImpl implements ISysUserService, UserService, Usernam
         // 设置权限信息
         loginUserInfo.setPermissions(menuList);
 
-        // 生成访问令牌
+        // 记录登录元数据（仅在首次登录时刻写入；token 续期不更新）
+        captureLoginMetadata(loginUserInfo);
+
+        // 生成访问令牌 + 写入 access/refresh key
         generateAccessToken(loginUserInfo);
+        // 注册到 userId → accessToken 反向索引，支持后续按 userId 踢人 / 在线列表
+        sessionRegistry.register(loginUserInfo);
     }
 
     /**
      * 退出登录
-     * <p>删除当前用户在 Redis 中的 access token 和 refresh token</p>
+     * <p>清理当前会话的 access/refresh token 与在线索引</p>
      */
     @Override
     public void logout() {
         LoginUserInfo loginUser = SecurityContextHelper.getLoginUser();
         if (loginUser != null) {
-            RedisUtils.deleteObject(ACCESS_TOKEN + loginUser.getAccessToken());
-            RedisUtils.deleteObject(REFRESH_TOKEN + loginUser.getRefreshToken());
+            sessionRegistry.unregister(loginUser);
         }
     }
 
@@ -905,12 +911,13 @@ public class SysUserServiceImpl implements ISysUserService, UserService, Usernam
             throw new InvalidTokenException("刷新令牌无效或已过期");
         }
 
-        // 删除旧令牌
-        RedisUtils.deleteObject(ACCESS_TOKEN + loginUserInfo.getAccessToken());
-        RedisUtils.deleteObject(REFRESH_TOKEN + refreshToken);
+        // 旧令牌从 Redis 与在线索引下线
+        sessionRegistry.unregister(loginUserInfo);
 
-        // 生成新令牌并更新 Redis
+        // 生成新令牌并更新 Redis（loginTime/loginIp/userAgent 保留原始登录时刻）
         generateAccessToken(loginUserInfo);
+        // 重新注册到在线索引
+        sessionRegistry.register(loginUserInfo);
         return loginUserInfo;
     }
 
@@ -950,5 +957,18 @@ public class SysUserServiceImpl implements ISysUserService, UserService, Usernam
         RedisUtils.setCacheObject(ACCESS_TOKEN + uuid, loginUserInfo, Duration.ofMinutes(ACCESS_TOKEN_EXPIRE_MINUTES));
         // 刷新token设置过期时间
         RedisUtils.setCacheObject(REFRESH_TOKEN + refreshUuid, loginUserInfo, Duration.ofMinutes(REFRESH_TOKEN_EXPIRE_MINUTES));
+    }
+
+    /**
+     * 从当前请求线程捕获登录元数据：登录时刻、客户端 IP、User-Agent。
+     * <p>非请求线程调用（如定时任务里手工生成会话）时降级为仅写 loginTime。</p>
+     */
+    private void captureLoginMetadata(LoginUserInfo loginUserInfo) {
+        loginUserInfo.setLoginTime(LocalDateTime.now());
+        HttpServletRequest request = ServletUtils.getRequest();
+        if (request != null) {
+            loginUserInfo.setLoginIp(ServletUtils.getClientIP());
+            loginUserInfo.setUserAgent(request.getHeader("User-Agent"));
+        }
     }
 }
