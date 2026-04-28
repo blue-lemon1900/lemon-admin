@@ -79,13 +79,30 @@ public class OnlineUserServiceImpl implements SessionRegistry, OnlineSessionAdmi
         if (userId != null && userId.equals(currentUserId)) {
             throw new ServiceException("不能踢出当前登录用户");
         }
+        int count = unregisterAll(userId);
+        if (count > 0) {
+            log.info("管理员踢出用户 {} 全部端，共 {} 个会话", userId, count);
+        }
+        return count;
+    }
 
+    @Override
+    public int unregisterAll(Long userId) {
+        if (userId == null) {
+            return 0;
+        }
         RSet<String> set = RedisUtils.getClient().getSet(ONLINE_USER + userId);
         Set<String> tokens = set.readAll();
         int count = 0;
         for (String token : tokens) {
-            if (kickByToken(token)) {
+            LoginUserInfo info = RedisUtils.getCacheObject(ACCESS_TOKEN + token);
+            if (info != null) {
+                // 复用 unregister 一次清干净 access/refresh/set 三处
+                unregister(info);
                 count++;
+            } else {
+                // token 已过期但残留在集合中，兜底删一下 access key
+                RedisUtils.deleteObject(ACCESS_TOKEN + token);
             }
         }
         // 兜底：清空残留集合

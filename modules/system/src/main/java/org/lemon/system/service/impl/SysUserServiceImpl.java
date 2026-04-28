@@ -875,6 +875,9 @@ public class SysUserServiceImpl implements ISysUserService, UserService, Usernam
         // 记录登录元数据（仅在首次登录时刻写入；token 续期不更新）
         captureLoginMetadata(loginUserInfo);
 
+        // 单端登录策略：把该用户已有的全部会话先下线，再发新 token
+        sessionRegistry.unregisterAll(loginUserInfo.getUserId());
+
         // 生成访问令牌 + 写入 access/refresh key
         generateAccessToken(loginUserInfo);
         // 注册到 userId → accessToken 反向索引，支持后续按 userId 踢人 / 在线列表

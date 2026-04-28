@@ -31,4 +31,15 @@ public interface SessionRegistry {
      * <p>用于 {@code logout} 与 {@code updateToken} 的旧 token 清理。</p>
      */
     void unregister(LoginUserInfo loginUserInfo);
+
+    /**
+     * 把指定用户的全部活跃会话一次性下线（不带"自踢"护栏，专供登录链路 / 内部使用）。
+     * <p>用于实现「单端登录」语义：登录时把该用户的旧会话先全部清理，再发新 token。</p>
+     * <p>与 {@code OnlineSessionAdmin.kickByUserId} 的差别：后者带「不能踢自己」护栏给管理后台用，
+     * 此处不带护栏（登录链路里 SecurityContext 还没有当前用户，且语义是"系统主动顶替旧会话"
+     * 而非"管理员踢人"）。</p>
+     *
+     * @return 实际下线的会话数（0 表示该用户此前没有活跃会话）
+     */
+    int unregisterAll(Long userId);
 }
