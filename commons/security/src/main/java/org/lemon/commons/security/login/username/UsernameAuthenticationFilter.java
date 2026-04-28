@@ -23,18 +23,34 @@ import static org.lemon.commons.security.constant.AuthenticationConstant.*;
 /**
  * 提取用户名密码
  * AbstractAuthenticationProcessingFilter 的实现类要做的工作：
+ *  <p>
  * 1. 从HttpServletRequest提取授权凭证。假设用户使用 用户名/密码 登录，就需要在这里提取 username 和 password。
  * 然后，把提取到的授权凭证封装到的Authentication对象，并且 authentication.isAuthenticated() 一定返回false
+ * <p>
  * 2. 将Authentication对象传给AuthenticationManager进行实际的授权操作
  * <p>
- * 认证流程
- * graph TD
- * A[客户端请求] --> B[UsernameAuthenticationFilter]
- * B --> C[封装UsernameAuthentication对象]
- * C --> D[AuthenticationManager]
- * D --> E[选择合适的AuthenticationProvider]
- * E --> F[执行实际认证]
- * F --> G[返回认证后的Authentication对象]
+ * 认证流程：
+ * <pre>
+ *   客户端请求
+ *        │
+ *        ▼
+ *   UsernameAuthenticationFilter
+ *        │
+ *        ▼
+ *   封装 UsernameAuthentication 对象
+ *        │
+ *        ▼
+ *   AuthenticationManager
+ *        │
+ *        ▼
+ *   选择合适的 AuthenticationProvider
+ *        │
+ *        ▼
+ *   执行实际认证
+ *        │
+ *        ▼
+ *   返回认证后的 Authentication 对象
+ * </pre>
  */
 @Slf4j
 public class UsernameAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
