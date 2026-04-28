@@ -1,18 +1,10 @@
 plugins {
     java
     id("org.springframework.boot")
-    idea
 }
 
 group = "org.lemon"
 version = "0.0.1"
-
-// 用子模块名作为 IDEA 模块名,不再带 rootProject.name 前缀
-idea {
-    module {
-        name = project.name
-    }
-}
 
 repositories {
     mavenCentral()
