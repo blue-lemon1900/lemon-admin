@@ -1,9 +1,11 @@
 package org.lemon.commons.security.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lemon.commons.core.exceptions.ServiceException;
 import org.lemon.commons.core.utils.MapstructUtils;
 import org.lemon.commons.redis.utils.RedisUtils;
+import org.lemon.commons.security.config.properties.SecurityProperties;
 import org.lemon.commons.security.data.LoginUserInfo;
 import org.lemon.commons.security.data.vo.OnlineUserVO;
 import org.lemon.commons.security.service.OnlineSessionAdmin;
@@ -11,14 +13,12 @@ import org.lemon.commons.security.service.SessionRegistry;
 import org.lemon.commons.security.utils.SecurityContextHelper;
 import org.redisson.api.RSet;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import static org.lemon.commons.core.constant.GlobalConstants.*;
-import static org.lemon.commons.security.constant.AuthenticationConstant.REFRESH_TOKEN_EXPIRE_MINUTES;
 
 /**
  * 默认实现：基于 Redisson {@link RSet} 维护 {@code userId → accessToken} 反向索引。
@@ -26,14 +26,17 @@ import static org.lemon.commons.security.constant.AuthenticationConstant.REFRESH
  * 通过 Spring 按接口类型注入分别提供给登录链路 / 管理后台，避免 ISP 违反。</p>
  */
 @Slf4j
+@RequiredArgsConstructor
 public class OnlineUserServiceImpl implements SessionRegistry, OnlineSessionAdmin {
+
+    private final SecurityProperties securityProperties;
 
     @Override
     public void register(LoginUserInfo loginUserInfo) {
         RSet<String> set = RedisUtils.getClient().getSet(ONLINE_USER + loginUserInfo.getUserId());
         set.add(loginUserInfo.getAccessToken());
         // 集合 TTL 跟随 refresh token，登录/续期时一起被刷新；超过 TTL 后一切自然消亡
-        set.expire(Duration.ofMinutes(REFRESH_TOKEN_EXPIRE_MINUTES));
+        set.expire(securityProperties.getRefreshTokenExpire());
     }
 
     @Override

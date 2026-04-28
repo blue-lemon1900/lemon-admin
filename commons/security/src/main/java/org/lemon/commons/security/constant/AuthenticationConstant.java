@@ -38,14 +38,4 @@ public interface AuthenticationConstant {
      */
     String AUTHORIZATION_BEARER = "Bearer ";
 
-    /**
-     * 访问令牌过期时间（分钟）
-     */
-    long ACCESS_TOKEN_EXPIRE_MINUTES = 10;
-
-    /**
-     * 刷新令牌过期时间（分钟）
-     */
-    long REFRESH_TOKEN_EXPIRE_MINUTES = 30;
-
 }

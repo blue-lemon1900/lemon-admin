@@ -127,8 +127,8 @@ public class SecurityBeanConfig {
      * {@code OnlineSessionAdmin}（读边 + 管理操作）两个接口都能被 Spring 按类型注入。</p>
      */
     @Bean
-    public OnlineUserServiceImpl onlineUserService() {
-        return new OnlineUserServiceImpl();
+    public OnlineUserServiceImpl onlineUserService(SecurityProperties securityProperties) {
+        return new OnlineUserServiceImpl(securityProperties);
     }
 
     /**

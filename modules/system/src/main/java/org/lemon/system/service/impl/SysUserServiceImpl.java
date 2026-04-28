@@ -26,6 +26,7 @@ import org.lemon.commons.mybatis.core.page.PageQuery;
 import org.lemon.commons.mybatis.core.page.TableDataInfo;
 import org.lemon.commons.mybatis.helper.DataPermissionHelper;
 import org.lemon.commons.redis.utils.RedisUtils;
+import org.lemon.commons.security.config.properties.SecurityProperties;
 import org.lemon.commons.security.data.LoginUserInfo;
 import org.lemon.commons.security.data.model.RoleModel;
 import org.lemon.commons.security.service.SessionRegistry;
@@ -49,15 +50,12 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.lemon.commons.core.constant.GlobalConstants.ACCESS_TOKEN;
 import static org.lemon.commons.core.constant.GlobalConstants.REFRESH_TOKEN;
-import static org.lemon.commons.security.constant.AuthenticationConstant.ACCESS_TOKEN_EXPIRE_MINUTES;
-import static org.lemon.commons.security.constant.AuthenticationConstant.REFRESH_TOKEN_EXPIRE_MINUTES;
 
 /**
  * 用户 业务层处理
@@ -84,6 +82,8 @@ public class SysUserServiceImpl implements ISysUserService, UserService, Usernam
     private final SysUserPostMapper userPostMapper;
 
     private final SessionRegistry sessionRegistry;
+
+    private final SecurityProperties securityProperties;
 
     @Override
     public TableDataInfo<SysUserVo> selectPageUserList(SysUserBo user, PageQuery pageQuery) {
@@ -956,10 +956,10 @@ public class SysUserServiceImpl implements ISysUserService, UserService, Usernam
         // 设置刷新token
         loginUserInfo.setRefreshToken(refreshUuid);
 
-        // token 设置过期时间
-        RedisUtils.setCacheObject(ACCESS_TOKEN + uuid, loginUserInfo, Duration.ofMinutes(ACCESS_TOKEN_EXPIRE_MINUTES));
+        // token 设置过期时间（来自 lemon.security.access-token-expire / refresh-token-expire 配置）
+        RedisUtils.setCacheObject(ACCESS_TOKEN + uuid, loginUserInfo, securityProperties.getAccessTokenExpire());
         // 刷新token设置过期时间
-        RedisUtils.setCacheObject(REFRESH_TOKEN + refreshUuid, loginUserInfo, Duration.ofMinutes(REFRESH_TOKEN_EXPIRE_MINUTES));
+        RedisUtils.setCacheObject(REFRESH_TOKEN + refreshUuid, loginUserInfo, securityProperties.getRefreshTokenExpire());
     }
 
     /**

@@ -1,10 +1,13 @@
 package org.lemon.commons.security.config.properties;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
+
+import java.time.Duration;
 
 @Data
 @Validated
@@ -42,4 +45,18 @@ public class SecurityProperties {
      */
     @Pattern(regexp = "argon2|bcrypt|pbkdf2|scrypt", message = "passwordEncoderId 必须是 argon2/bcrypt/pbkdf2/scrypt 之一")
     private String passwordEncoderId = "argon2";
+
+    /**
+     * 访问令牌过期时间。
+     * <p>支持 yaml 简写：{@code 10m}、{@code 1h}、{@code 1d} 等；不带单位默认毫秒。</p>
+     */
+    @NotNull(message = "accessTokenExpire 不能为空")
+    private Duration accessTokenExpire = Duration.ofMinutes(10);
+
+    /**
+     * 刷新令牌过期时间，建议大于 {@link #accessTokenExpire}。
+     * <p>同时也作为「用户在线集合」{@code online_user:{userId}} 的 TTL。</p>
+     */
+    @NotNull(message = "refreshTokenExpire 不能为空")
+    private Duration refreshTokenExpire = Duration.ofMinutes(30);
 }

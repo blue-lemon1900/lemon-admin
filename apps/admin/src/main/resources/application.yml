@@ -93,11 +93,15 @@ lemon:
   security:
     token-header: Authorization
     token-parameter: token
+    # 公共路径
     permit-all-urls:
-      - /favicon.ico    # 公共路径
-    # 新密码编码使用的算法 id;切换该值即可迁移加密算法,老前缀密码仍可校验并按需自动升级
-    # 取值: argon2 (默认,推荐) / bcrypt / pbkdf2 / scrypt
+      - /favicon.ico
+    # 密码编码使用的算法, 取值: argon2 (默认,推荐) / bcrypt / pbkdf2 / scrypt
     password-encoder-id: argon2
+    # 访问令牌过期时间
+    access-token-expire: 30m
+    # 刷新令牌过期时间
+    refresh-token-expire: 2h
   # 验证码
   captcha:
     # 是否启用验证码校验
