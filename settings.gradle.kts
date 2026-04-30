@@ -5,6 +5,11 @@ pluginManagement {
     includeBuild("build-logic")
 }
 
+// 应用 settings 级约定插件:集中管理依赖仓库
+plugins {
+    id("lemon.settings-conventions")
+}
+
 rootProject.name = "lemon-admin"
 
 /* ---------------------------------- 公共库模块 ---------------------------------- */

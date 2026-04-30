@@ -6,10 +6,6 @@ plugins {
 group = "org.lemon"
 version = "0.0.1"
 
-repositories {
-    mavenCentral()
-}
-
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(25)
