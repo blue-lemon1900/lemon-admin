@@ -23,4 +23,7 @@ dependencies {
     implementation(project(":encrypt"))
     implementation(project(":sse"))
     implementation(project(":tenant"))
+
+    // MapStruct:本模块 Vo/Bo 类使用 @AutoMapper 注解,需要 BaseMapper / annotation 类在 compileClasspath 上
+    implementation("io.github.linpeilie:mapstruct-plus-spring-boot-starter")
 }

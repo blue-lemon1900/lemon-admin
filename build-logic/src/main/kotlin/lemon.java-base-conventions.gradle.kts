@@ -32,6 +32,11 @@ dependencies {
     implementation(hutoolBom)
     implementation(mybatisPlusBom)
 
+    // Spring Boot 基础:本仓库所有 library/app 模块都是 Spring Boot 组件,
+    // 直接使用 @AutoConfiguration、@Bean、@ConditionalOn*、@ConfigurationProperties 等注解。
+    // 显式声明,避免靠任何一条 api 链路 transitive leak。
+    implementation("org.springframework.boot:spring-boot-starter")
+
     // 覆盖注解处理器的独立解析路径
     annotationProcessor(springBom)
     annotationProcessor("org.projectlombok:lombok")

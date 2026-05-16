@@ -12,9 +12,8 @@ tasks.withType<Test>().configureEach {
 val libs = the<VersionCatalogsExtension>().named("libs")
 
 dependencies {
-    // MapStruct BOM 通过 api() 暴露,让下游消费者也对齐 MapStruct 版本
-    val mapstructBom = platform(libs.findLibrary("mapstruct-plus-bom").get())
-    api(mapstructBom)
+    val mapstructPom = platform(libs.findLibrary("mapstruct-plus-pom").get())
+    implementation(mapstructPom)
 
     // library 特有的注解处理器
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")

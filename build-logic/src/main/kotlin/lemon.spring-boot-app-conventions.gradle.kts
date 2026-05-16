@@ -4,8 +4,3 @@ plugins {
     id("lemon.java-base-conventions")
     id("org.springframework.boot")
 }
-
-dependencies {
-    // 应用启动类所需的基础依赖(@SpringBootApplication 等)
-    implementation("org.springframework.boot:spring-boot-starter")
-}

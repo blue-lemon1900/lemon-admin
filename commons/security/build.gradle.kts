@@ -16,4 +16,7 @@ dependencies {
     implementation(libs.guava)
     // ContextPropagatingTaskDecorator 的运行时依赖
     implementation("io.micrometer:context-propagation")
+
+    // MapStruct:本模块 VO 类使用 @AutoMapper 注解,需要 BaseMapper / annotation 类在 compileClasspath 上
+    implementation("io.github.linpeilie:mapstruct-plus-spring-boot-starter")
 }

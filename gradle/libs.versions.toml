@@ -20,7 +20,7 @@ bcprov-jdk15to18 = "1.80"
 spring-boot-bom = { group = "org.springframework.boot", name = "spring-boot-dependencies", version.ref = "spring-boot" }
 hutool-bom = { group = "cn.hutool", name = "hutool-bom", version.ref = "hutool" }
 mybatis-plus-bom = { group = "com.baomidou", name = "mybatis-plus-bom", version.ref = "mybatis-plus" }
-mapstruct-plus-bom = { group = "io.github.linpeilie", name = "mapstruct-plus-pom", version.ref = "mapstruct-plus" }
+mapstruct-plus-pom = { group = "io.github.linpeilie", name = "mapstruct-plus-pom", version.ref = "mapstruct-plus" }
 mapstruct-plus-processor = { group = "io.github.linpeilie", name = "mapstruct-plus-processor", version.ref = "mapstruct-plus" }
 
 # Gradle 插件依赖（build-logic 自身使用）

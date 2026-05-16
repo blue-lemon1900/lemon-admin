@@ -32,8 +32,9 @@ dependencies {
     // 离线 IP 地址定位
     api(libs.ip2region)
 
-    // MapStruct：编译期生成 DTO <-> Entity 映射代码
-    api("io.github.linpeilie:mapstruct-plus-spring-boot-starter")
+    // MapStruct:本模块 MapstructUtils 工具类内部依赖 Converter,运行时由 Spring Boot autoconfig 注入。
+    // 用 implementation 不向下游暴露,需要 @AutoMapper 编译期注解的模块(:security/:system)各自显式声明同一坐标。
+    implementation("io.github.linpeilie:mapstruct-plus-spring-boot-starter")
 
     // 检测 application.yml 中已弃用的配置键并提示迁移
     runtimeOnly("org.springframework.boot:spring-boot-properties-migrator")
